@@ -1,47 +1,53 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct no {
+typedef struct noB {
     int total;
+    int folha;
     int* chaves;
-    struct no** filhos;
-    struct no* pai; 
-} No;
+    struct noB** filhos;
+    struct noB* pai; 
+} NoB;
 
 typedef struct arvoreB {
-  No* raiz;
+  NoB* raiz;
   int ordem;
 } ArvoreB;
 
-ArvoreB* criaArvore(int);
-No* criaNo(ArvoreB*);
-void percorreArvore(No*);
-int pesquisaBinaria(No*, int);
+ArvoreB* criaArvoreB(int);
+NoB* criaNoB(ArvoreB*);
+void percorreArvoreB(NoB*);
+int pesquisaBinaria(NoB*, int);
 int localizaChave(ArvoreB*, int);
-No* localizaNo(ArvoreB*, int);
-void adicionaChaveNo(No*, No*, int);
-int transbordo(ArvoreB*,No*);
-No* divideNo(ArvoreB*, No*);
-void adicionaChaveRecursivo(ArvoreB*, No*, No*, int);
+NoB* localizaNoB(ArvoreB*, int);
+void adicionaChaveNoB(NoB*, NoB*, int);
+int transbordo(ArvoreB*,NoB*);
+NoB* divideNoB(ArvoreB*, NoB*);
+void adicionaChaveRecursivo(ArvoreB*, NoB*, NoB*, int);
 void adicionaChave(ArvoreB*, int);
+void removeChave(ArvoreB*, int);
+void removeChaveFolha(NoB*, int);
+int pegaAntecessor(NoB*,int);
 
-ArvoreB* criaArvore(int ordem) {
+
+ArvoreB* criaArvoreB(int ordem) {
     ArvoreB* a = malloc(sizeof(ArvoreB));
     a->ordem = ordem;
-    a->raiz = criaNo(a);
+    a->raiz = criaNoB(a);
 
     return a;
 }
 
-No* criaNo(ArvoreB* arvore) {
+NoB* criaNoB(ArvoreB* arvore) {
     int max = arvore->ordem * 2;
-    No* no = malloc(sizeof(No));
+    NoB* no = malloc(sizeof(NoB));
 
     no->pai = NULL;
         
     no->chaves = malloc(sizeof(int) * (max + 1));
-    no->filhos = malloc(sizeof(No) * (max + 2));
+    no->filhos = malloc(sizeof(NoB) * (max + 2));
     no->total = 0;
+    no->folha = 1;
 
     for (int i = 0; i < max + 2; i++)
         no->filhos[i] = NULL;
@@ -49,19 +55,20 @@ No* criaNo(ArvoreB* arvore) {
     return no;
 }
 
-void percorreArvore(No* no) {
+void percorreArvoreB(NoB* no) {
     if (no != NULL) {
         for (int i = 0; i < no->total; i++){
-            percorreArvore(no->filhos[i]); //visita o filho a esquerda
+            percorreArvoreB(no->filhos[i]); //visita o filho a esquerda
             
             printf("%d ",no->chaves[i]);
+            printf("(%d) ",no->folha);
         }
-
-        percorreArvore(no->filhos[no->total]); //visita ultimo filho (direita)
+        
+        percorreArvoreB(no->filhos[no->total]); //visita ultimo filho (direita)
     }
 }
 
-int pesquisaBinaria(No* no, int chave) {
+int pesquisaBinaria(NoB* no, int chave) {
     int inicio = 0, fim = no->total - 1, meio;		
     
     while (inicio <= fim) {	
@@ -79,7 +86,7 @@ int pesquisaBinaria(No* no, int chave) {
 }
 
 int localizaChave(ArvoreB* arvore, int chave) {	
-    No *no = arvore->raiz;
+    NoB *no = arvore->raiz;
     
     while (no != NULL) {
         int i = pesquisaBinaria(no, chave);
@@ -94,8 +101,8 @@ int localizaChave(ArvoreB* arvore, int chave) {
     return 0; //não encontrou	
 }
 
-No* localizaNo(ArvoreB* arvore, int chave) {	
-    No *no = arvore->raiz;
+NoB* localizaNoB(ArvoreB* arvore, int chave) {	
+    NoB *no = arvore->raiz;
     
     while (no != NULL) {
         int i = pesquisaBinaria(no, chave);
@@ -109,7 +116,7 @@ No* localizaNo(ArvoreB* arvore, int chave) {
     return NULL; //não encontrou nenhum nó
 }
 
-void adicionaChaveNo(No* no, No* novo, int chave) {
+void adicionaChaveNoB(NoB* no, NoB* novo, int chave) {
     int i = pesquisaBinaria(no, chave);
     
     for (int j = no->total - 1; j >= i; j--) {
@@ -123,40 +130,48 @@ void adicionaChaveNo(No* no, No* novo, int chave) {
     no->total++;
 }
 
-int transbordo(ArvoreB* arvore, No* no) {
+int transbordo(ArvoreB* arvore, NoB* no) {
     return no->total > arvore->ordem * 2;
 }
 
-No* divideNo(ArvoreB* arvore, No* no) {
+NoB* divideNoB(ArvoreB* arvore, NoB* no) {
     int meio = no->total / 2;
-    No* novo = criaNo(arvore);
+    NoB* novo = criaNoB(arvore);
     novo->pai = no->pai;
+    
 
     for (int i = meio + 1; i < no->total; i++) {
         novo->filhos[novo->total] = no->filhos[i];
         novo->chaves[novo->total] = no->chaves[i];
-        if (novo->filhos[novo->total] != NULL) novo->filhos[novo->total]->pai = novo;
+        if (novo->filhos[novo->total] != NULL) {
+            novo->filhos[novo->total]->pai = novo;
+            novo->folha=0;
+        }
         
         novo->total++;
     }
 
     novo->filhos[novo->total] = no->filhos[no->total];
-    if (novo->filhos[novo->total] != NULL) novo->filhos[novo->total]->pai = novo;    
+    if (novo->filhos[novo->total] != NULL){ 
+        novo->filhos[novo->total]->pai = novo; 
+        novo->folha=0;
+    }   
     no->total = meio;
     return novo;
 }
 
-void adicionaChaveRecursivo(ArvoreB* arvore, No* no, No* novo, int chave) {
-    adicionaChaveNo(no, novo, chave);
+void adicionaChaveRecursivo(ArvoreB* arvore, NoB* no, NoB* novo, int chave) {
+    adicionaChaveNoB(no, novo, chave);
     
     if (transbordo(arvore, no)) {
         int promovido = no->chaves[arvore->ordem]; 
-        No* novo = divideNo(arvore, no);
+        NoB* novo = divideNoB(arvore, no);
 
         if (no->pai == NULL) { //raiz da arvore
-            No* pai = criaNo(arvore);            
+            NoB* pai = criaNoB(arvore);            
             pai->filhos[0] = no;
-            adicionaChaveNo(pai, novo, promovido);
+            adicionaChaveNoB(pai, novo, promovido);
+            pai->folha = 0;
             
             no->pai = pai;
             novo->pai = pai;
@@ -167,7 +182,48 @@ void adicionaChaveRecursivo(ArvoreB* arvore, No* no, No* novo, int chave) {
 }
 
 void adicionaChave(ArvoreB* arvore, int chave) {
-    No* no = localizaNo(arvore, chave);
+    NoB* no = localizaNoB(arvore, chave);
 
     adicionaChaveRecursivo(arvore, no, NULL, chave);
+}
+ 
+void removeChave(ArvoreB* arvore, int chave){
+    NoB* no = localizaNoB(arvore, chave);
+    
+    if(no!=NULL){
+        int index = pesquisaBinaria(no,chave);
+    
+        if(no->folha){                                          
+            if(no == arvore->raiz){                         // Caso 1, folha sem underflow
+                removeChaveFolha(no,index);
+            }else if(no->total-1 >= arvore->ordem){
+                removeChaveFolha(no,index);                
+            }else{                                          // Caso 3 e 4, folha com underflow
+                
+            }
+        }else{                                              //Caso 2, não folha
+            int antes = pegaAntecessor(no,index); 
+            removeChave(arvore, antes);
+            no->chaves[index] = antes;
+            
+        }
+
+    }
+
+
+}
+
+void removeChaveFolha(NoB* no, int index){
+    for (int i = index + 1; i < no->total; ++i) {
+        no->chaves[i - 1] = no->chaves[i];
+    }
+    no->total--;
+}
+
+int pegaAntecessor(NoB* no, int index){
+    NoB* atual = no->filhos[index];
+    while(!atual->folha){
+        atual = atual->filhos[atual->total];
+    }
+    return atual->chaves[atual->total-1];
 }

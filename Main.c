@@ -1,7 +1,8 @@
 #include "ARB.h"
+#include "time.h"
 
 int main() {
-    ArvoreB* arvore = criaArvore(1);
+    ArvoreB* arvore = criaArvoreB(1);
     
     adicionaChave(arvore, 12);
     adicionaChave(arvore, 3);
@@ -10,8 +11,9 @@ int main() {
     adicionaChave(arvore, 15);
     adicionaChave(arvore, 99);
     adicionaChave(arvore, 1);
+    adicionaChave(arvore, 20);
 
-    percorreArvore(arvore->raiz);
+    percorreArvoreB(arvore->raiz);
 
     /*
     Teste de Mesa
@@ -45,6 +47,20 @@ int main() {
                 /     \      \
         [][1][][3][] [][7][] [][15][][99][]
     
+    20)
+                [][5][][12][]
+                /     \      \
+        [][1][][3][] [][7][] [][15][][20][][99][]
+
+                [][5][][12][][20][]
+                /     \      \
+        [][1][][3][] [][7][] [][15][][99][]
+
+                        [][12][]
+                      /          \
+                [][5][]          [][20][]
+                /     \          /        \
+        [][1][][3][] [][7][] [][15][]     [][99][]
 
     */ 
 }
