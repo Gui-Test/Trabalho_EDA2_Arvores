@@ -18,7 +18,7 @@ ArvoreB* criaArvoreB(int);
 NoB* criaNoB(ArvoreB*);
 void percorreArvoreB(NoB*);
 int pesquisaBinaria(NoB*, int);
-int localizaChave(ArvoreB*, int);
+NoB* localizaNoREAL(ArvoreB*, int);
 NoB* localizaNoB(ArvoreB*, int);
 void adicionaChaveNoB(NoB*, NoB*, int);
 int transbordo(ArvoreB*,NoB*);
@@ -85,14 +85,14 @@ int pesquisaBinaria(NoB* no, int chave) {
     return inicio; //não encontrou	
 }
 
-int localizaChave(ArvoreB* arvore, int chave) {	
+NoB* localizaNoREAL(ArvoreB* arvore, int chave) {	
     NoB *no = arvore->raiz;
     
     while (no != NULL) {
         int i = pesquisaBinaria(no, chave);
 
         if (i < no->total && no->chaves[i] == chave) {
-            return 1; //encontrou
+            return no; //encontrou
         } else {
             no = no->filhos[i];
         }
@@ -101,7 +101,7 @@ int localizaChave(ArvoreB* arvore, int chave) {
     return 0; //não encontrou	
 }
 
-NoB* localizaNoB(ArvoreB* arvore, int chave) {	
+NoB* localizaNoB(ArvoreB* arvore, int chave) {	// 21/11 - 15:43 QUE ÓDIO DESSA FUNÇÃO TO USANDO ELA DE FORMA ERRADA ATÉ AGORA
     NoB *no = arvore->raiz;
     
     while (no != NULL) {
@@ -188,7 +188,7 @@ void adicionaChave(ArvoreB* arvore, int chave) {
 }
  
 void removeChave(ArvoreB* arvore, int chave){
-    NoB* no = localizaNoB(arvore, chave);
+    NoB* no = localizaNoREAL(arvore, chave);
     
     if(no!=NULL){
         int index = pesquisaBinaria(no,chave);
@@ -202,9 +202,18 @@ void removeChave(ArvoreB* arvore, int chave){
                 
             }
         }else{                                              //Caso 2, não folha
-            int antes = pegaAntecessor(no,index); 
-            removeChave(arvore, antes);
-            no->chaves[index] = antes;
+            if(no->filhos[index]->total>=arvore->ordem){
+                int antes = pegaAntecessor(no,index); 
+                removeChave(arvore, antes);
+                no->chaves[index] = antes;
+            }else if(no->filhos[index+1]->total>=arvore->ordem){
+                int depois = pegaSucessor(no,index); 
+                removeChave(arvore, depois);
+                no->chaves[index] = depois; 
+            }else{
+                
+            }
+
             
         }
 
@@ -226,4 +235,12 @@ int pegaAntecessor(NoB* no, int index){
         atual = atual->filhos[atual->total];
     }
     return atual->chaves[atual->total-1];
+}
+
+int pegaSucessor(NoB* no, int index){
+    NoB* atual = no->filhos[index+1];
+    while(!atual->folha){
+        atual = atual->filhos[0];
+    }
+    return atual->chaves[0];
 }
