@@ -4,64 +4,71 @@
 enum coloracao { Vermelho, Preto };
 typedef enum coloracao Cor;
 
-typedef struct no {
-    struct no* pai;
-    struct no* esquerda;
-    struct no* direita;
+typedef struct noARN {
+    struct noARN* pai;
+    struct noARN* esquerda;
+    struct noARN* direita;
     Cor cor; //cor do nó (Vermelho ou Preto)
     int valor;
-} No;
+} NoARN;
 
 typedef struct arvore {
-    struct no* raiz;
-    struct no* nulo;
-} Arvore;
+    struct noARN* raiz;
+    struct noARN* nulo;
+} ArvoreARN;
 
-Arvore* cria();
-int vazia(Arvore* AVL);
-No* criarNo(Arvore*, No*, int);
-No* localizar(No* no, int valor);
-void adicionar(Arvore* arvore, int valor);
-void percorrer(Arvore* arvore,No* no, void (*callback)(int));
-void visitar(int valor);
-void balancear(Arvore* arvore, No* no);
-void rotacionarEsquerda(Arvore* arvore, No* no);
-void rotacionarDireita(Arvore* arvore, No* no);
+ArvoreARN* criaARN();
+int vaziaARN(ArvoreARN* AVL);
+NoARN* criarNoARN(ArvoreARN*, NoARN*, int);
+NoARN* localizarARN(NoARN* no, int valor);
+void adicionarARN(ArvoreARN* arvore, int valor);
+void percorrerARN(ArvoreARN* arvore,NoARN* no, void (*callback)(int));
+void percorrerInOrderARN(ArvoreARN* arvore,NoARN* no, void (*callback)(int));
+void percorrerPreOrderARN(ArvoreARN* arvore,NoARN* no, void (*callback)(int));
+void visitarARN(int valor);
+void balancearARN(ArvoreARN* arvore, NoARN* no);
+void rotacionarEsquerdaARN(ArvoreARN* arvore, NoARN* no);
+void rotacionarDireitaARN(ArvoreARN* arvore, NoARN* no);
+void removerARN(ArvoreARN* arvore, int valor);
+void balancearRemocaoARN(ArvoreARN* arvore, NoARN* no);
+NoARN* menorNoARN(ArvoreARN* arvore, NoARN* no);
+void substituirARN(ArvoreARN* arvore, NoARN* antigo, NoARN* novo);
 
 
-int vazia(Arvore* ARB) {
+int vaziaARN(ArvoreARN* ARB) {
     return (ARB->raiz == NULL);
 }
 
-No* criarNo(Arvore* arvore, No* pai, int valor) {
-    No* no = malloc(sizeof(No));
+NoARN* criarNoARN(ArvoreARN* arvore, NoARN* pai, int valor) {
+    NoARN* no = (NoARN *)malloc(sizeof(NoARN));
 
     no->pai = pai;    
     no->valor = valor;
     no->direita = arvore->nulo;
     no->esquerda = arvore->nulo;
+    no->cor = Vermelho;
 
     return no;
 }
 
-Arvore* criar() {
-    Arvore* arvore = malloc(sizeof(Arvore));
+ArvoreARN* criaARN() {
+    ArvoreARN* arvore = (ArvoreARN *) malloc(sizeof(ArvoreARN));
     arvore->nulo = NULL;
     arvore->raiz = NULL;
 
-    arvore->nulo = criarNo(arvore, NULL, 0);
+    arvore->nulo = criarNoARN(arvore, NULL, 0);
     arvore->nulo->cor = Preto;
 
     return arvore;
 }
 
-void adicionar(Arvore* arvore, int valor) {
-    if (vazia(arvore)) {
-        arvore->raiz = criarNo(arvore, arvore->nulo, valor);
+void adicionarARN(ArvoreARN* arvore, int valor) {
+    if (vaziaARN(arvore)) {
+        arvore->raiz = criarNoARN(arvore, arvore->nulo, valor);
         arvore->raiz->cor = Preto;
     } else {
 
-    No* no = arvore->raiz;
+    NoARN* no = arvore->raiz;
 
     while (no != arvore->nulo) {
         if (valor > no->valor) {
@@ -80,7 +87,7 @@ void adicionar(Arvore* arvore, int valor) {
     }
 
     printf("Adicionando %d\n", valor);
-    No* novo = criarNo(arvore,no,valor);
+    NoARN* novo = criarNoARN(arvore,no,valor);
 
     if (valor > no->valor) {
             no->direita = novo;
@@ -88,11 +95,11 @@ void adicionar(Arvore* arvore, int valor) {
             no->esquerda = novo;
     }
         
-    balancear(arvore, no);
+    balancearARN(arvore, novo);
     }
 }
 
-No* localizar(No* no, int valor) {
+NoARN* localizarARN(NoARN* no, int valor) {
     while (no != NULL) {
         if (no->valor == valor) {
             return no;
@@ -104,30 +111,30 @@ No* localizar(No* no, int valor) {
     return NULL;
 }
 
-void percorrerInOrder(Arvore* arvore,No* no, void (*callback)(int)) {
+void percorrerInOrderARN(ArvoreARN* arvore,NoARN* no, void (*callback)(int)) {
     if (no != arvore->nulo) {
-        percorrerInOrder(arvore,no->esquerda,callback);
+        percorrerInOrderARN(arvore,no->esquerda,callback);
         callback(no->valor);
-        percorrerInOrder(arvore,no->direita,callback);
+        percorrerInOrderARN(arvore,no->direita,callback);
     }
 }
 
-void percorrerPreOrder(Arvore* arvore, No* no, void (*callback)(int)) {
+void percorrerPreOrderARN(ArvoreARN* arvore, NoARN* no, void (*callback)(int)) {
     if (no != arvore->nulo) {
         callback(no->valor);
-        percorrerPreOrder(arvore, no->esquerda,callback);
-        percorrerPreOrder(arvore, no->direita,callback);
+        percorrerPreOrderARN(arvore, no->esquerda,callback);
+        percorrerPreOrderARN(arvore, no->direita,callback);
     }
 }
 
-void visitar(int valor){
+void visitarARN(int valor){
     printf("%d ", valor);
 }
 
-void balancear(Arvore* arvore, No* no) {
+void balancearARN(ArvoreARN* arvore, NoARN* no) {
     while (no->pai->cor == Vermelho) { //Garante que todos os níveis foram balanceados
         if (no->pai == no->pai->pai->esquerda) {
-            No *tio = no->pai->pai->direita;
+            NoARN *tio = no->pai->pai->direita;
             if (tio->cor == Vermelho) {
                 tio->cor = Preto; //Resolve caso 2
                 no->pai->cor = Preto;
@@ -136,17 +143,17 @@ void balancear(Arvore* arvore, No* no) {
             } else {
                 if (no == no->pai->direita) {
                     no = no->pai; //Vai para o nível anterior
-                    rotacionarEsquerda(arvore, no); //Resolve caso 3
+                    rotacionarEsquerdaARN(arvore, no); //Resolve caso 3
                 } else {
                     no->pai->cor = Preto; //Resolve caso 4
                     no->pai->pai->cor = Vermelho;
-                    rotacionarDireita(arvore, no->pai->pai);
+                    rotacionarDireitaARN(arvore, no->pai->pai);
                 }
             }
         } else {
             //Repete o mesmo código do bloco if, invertendo o lado dos direita e esquerda
             if (no->pai == no->pai->pai->direita){
-                No *tio = no->pai->pai->esquerda;
+                NoARN *tio = no->pai->pai->esquerda;
                 if (tio->cor == Vermelho) {
                     tio->cor = Preto; //Resolve caso 2
 
@@ -155,11 +162,11 @@ void balancear(Arvore* arvore, No* no) {
                     no = no->pai->pai; //Vai para o nível anterior
                 } if (no == no->pai->esquerda) {
                     no = no->pai; //Vai para o nível anterior
-                    rotacionarDireita(arvore, no); //Resolve caso 3
+                    rotacionarDireitaARN(arvore, no); //Resolve caso 3
                 } else {
                     no->pai->cor = Preto; //Resolve caso 4
                     no->pai->pai->cor = Vermelho;
-                    rotacionarEsquerda(arvore, no->pai->pai);
+                    rotacionarEsquerdaARN(arvore, no->pai->pai);
                 }
             }
             }
@@ -167,8 +174,8 @@ void balancear(Arvore* arvore, No* no) {
         arvore->raiz->cor = Preto; //Resolve caso 1
 }
 
-void rotacionarEsquerda(Arvore* arvore, No* no) {
-    No* direita = no->direita;
+void rotacionarEsquerdaARN(ArvoreARN* arvore, NoARN* no) {
+    NoARN* direita = no->direita;
     no->direita = direita->esquerda;
     
     if (direita->esquerda != arvore->nulo)
@@ -187,8 +194,8 @@ void rotacionarEsquerda(Arvore* arvore, No* no) {
     no->pai = direita;
 }
 
-void rotacionarDireita(Arvore* arvore, No* no) {
-    No* esquerda = no->esquerda;
+void rotacionarDireitaARN(ArvoreARN* arvore, NoARN* no) {
+    NoARN* esquerda = no->esquerda;
     no->esquerda = esquerda->direita;
     
     if (esquerda->direita != arvore->nulo)
@@ -205,5 +212,155 @@ void rotacionarDireita(Arvore* arvore, No* no) {
     
     esquerda->direita = no; //Corrige relação pai-filho entre o nó pivô e o nó à esquerda
     no->pai = esquerda;
+}
+
+NoARN* menorNoARN(ArvoreARN* arvore, NoARN* no) {
+    while (no->esquerda != arvore->nulo) {
+        no = no->esquerda;
+    }
+    return no;
+}
+
+void substituirARN(ArvoreARN* arvore, NoARN* antigo, NoARN* novo) {
+    if (antigo->pai == arvore->nulo) {
+        arvore->raiz = novo;
+    } else if (antigo == antigo->pai->esquerda) {
+        antigo->pai->esquerda = novo;
+    } else {
+        antigo->pai->direita = novo;
+    }
+    novo->pai = antigo->pai;
+}
+
+void removerARN(ArvoreARN* arvore, int valor) {
+    NoARN* no = arvore->raiz;
+
+    while (no != NULL && no != arvore->nulo && no->valor != valor) {
+        if (valor < no->valor) {
+            no = no->esquerda;
+        } else {
+            no = no->direita;
+        }
+    }
+
+    if (no == NULL || no == arvore->nulo) {
+        return;
+    }
+
+    NoARN* sucessor = no;
+    NoARN* filho;
+    Cor corOriginal = sucessor->cor;
+    if (no->esquerda == arvore->nulo) {
+        filho = no->direita;
+        substituirARN(arvore, no, no->direita);
+    } else if (no->direita == arvore->nulo) {
+        filho = no->esquerda;
+        substituirARN(arvore, no, no->esquerda);
+    } else {
+        sucessor = menorNoARN(arvore, no->direita);
+        corOriginal = sucessor->cor;
+        filho = sucessor->direita;
+
+        if (sucessor->pai == no) {
+            filho->pai = sucessor;
+        } else {
+            substituirARN(arvore, sucessor, sucessor->direita);
+            sucessor->direita = no->direita;
+            sucessor->direita->pai = sucessor;
+        }
+
+        substituirARN(arvore, no, sucessor);
+
+        sucessor->esquerda = no->esquerda;
+        sucessor->esquerda->pai = sucessor;
+        sucessor->cor = no->cor;
+    }
+    free(no);
+
+    if (corOriginal == Preto) {
+        balancearRemocaoARN(arvore, filho);
+    }
+
+    if (arvore->raiz == arvore->nulo) {
+        arvore->raiz = NULL;
+    }
+
+    if (arvore->raiz != NULL) {
+        arvore->raiz->cor = Preto;
+        arvore->raiz->pai = arvore->nulo;
+    }
+}
+
+void balancearRemocaoARN(ArvoreARN* arvore, NoARN* no) {
+    while (no != arvore->raiz && no->cor == Preto) {
+        if (no == no->pai->esquerda) {
+            NoARN* irmao = no->pai->direita;
+
+            if (irmao->cor == Vermelho) {
+                irmao->cor = Preto;
+                no->pai->cor = Vermelho;
+                rotacionarEsquerdaARN(arvore, no->pai);
+                irmao = no->pai->direita;
+            }
+
+            if (irmao->esquerda->cor == Preto &&
+                irmao->direita->cor == Preto) {
+
+                if (irmao != arvore->nulo) {
+                    irmao->cor = Vermelho;
+                }
+
+                no = no->pai;
+            } else {
+                if (irmao->direita->cor == Preto) {
+                    irmao->esquerda->cor = Preto;
+                    irmao->cor = Vermelho;
+                    rotacionarDireitaARN(arvore, irmao);
+                    irmao = no->pai->direita;
+                }
+
+                irmao->cor = no->pai->cor;
+                no->pai->cor = Preto;
+                irmao->direita->cor = Preto;
+                rotacionarEsquerdaARN(arvore, no->pai);
+                no = arvore->raiz;
+            }
+
+        } else {
+            NoARN* irmao = no->pai->esquerda;
+
+            if (irmao->cor == Vermelho) {
+                irmao->cor = Preto;
+                no->pai->cor = Vermelho;
+                rotacionarDireitaARN(arvore, no->pai);
+                irmao = no->pai->esquerda;
+            }
+
+            if (irmao->direita->cor == Preto &&
+                irmao->esquerda->cor == Preto) {
+
+                if (irmao != arvore->nulo) {
+                    irmao->cor = Vermelho;
+                }
+
+                no = no->pai;
+            } else {
+                if (irmao->esquerda->cor == Preto) {
+                    irmao->direita->cor = Preto;
+                    irmao->cor = Vermelho;
+                    rotacionarEsquerdaARN(arvore, irmao);
+                    irmao = no->pai->esquerda;
+                }
+
+                irmao->cor = no->pai->cor;
+                no->pai->cor = Preto;
+                irmao->esquerda->cor = Preto;
+                rotacionarDireitaARN(arvore, no->pai);
+                no = arvore->raiz;
+            }
+        }
+    }
+
+    no->cor = Preto;
 }
 

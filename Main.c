@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "ARB.h"
+//#include "ARB.h"
+#include "ARN.h"
 #include "time.h"
 
 int main() {
+    /*
     ArvoreB* arvore = criaArvoreB(1);
     
     adicionaChave(arvore, 12);
@@ -17,7 +19,23 @@ int main() {
     removeChave(arvore,5);
 
     printf("chave (folha?) \n");
-    percorreArvoreB(arvore->raiz);
+    percorreArvoreB(arvore->raiz); 
+    */
+
+
+    /*
+    ArvoreARN* arvoreARN = criaARN();
+    adicionarARN(arvoreARN, 10);
+    adicionarARN(arvoreARN, 11);
+    adicionarARN(arvoreARN, 2);
+    adicionarARN(arvoreARN, 8);
+    adicionarARN(arvoreARN, 9);
+    percorrerInOrderARN(arvoreARN, arvoreARN->raiz, visitarARN);
+    removerARN(arvoreARN,8);
+    printf("\n");
+    percorrerInOrderARN(arvoreARN, arvoreARN->raiz, visitarARN);
+        */
+
 
     /*
     Teste de Mesa
