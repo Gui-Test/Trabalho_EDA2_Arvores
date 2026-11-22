@@ -17,11 +17,21 @@ AVL* cria();
 int vazia(AVL* AVL);
 int altura(No* no);
 int fb(No* no);
-No* rse(No* no);
-No* rsd(No* no);
-No* rde(No* no);
-No* rdd(No* no);
-No* adiciona(AVL* AVL, int valor);
+//No* rse(No* no);
+//No* rsd(No* no);
+//No* rde(No* no);
+//No* rdd(No* no);
+//No* adiciona(AVL* AVL, int valor);
+No* rse(No* no, AVL* a);
+No* rsd(No* no, AVL* a);
+No* rde(No* no, AVL* a);
+No* rdd(No* no, AVL* a);
+int checaNovo(No* no, AVL* a);
+No* adicionarNo(No* no, int valor);
+No* adicionar(AVL* arvore, int valor);
+No* procuraFundaEsq(No* no);
+void removerNo(No* no, AVL* arvore);
+void procuraPraRemover(No* no, int a, AVL* arvore)
 
 AVL* cria() {
     AVL *Avl;
@@ -34,7 +44,7 @@ int vazia(AVL* AVL) {
     return (AVL->raiz == NULL);
 }
 
-No* adiciona(AVL* AVL, int valor) {
+/**No* adiciona(AVL* AVL, int valor) {
     No *no = malloc(sizeof(No));
     no->pai = NULL;
     no->direita = NULL;
@@ -96,7 +106,7 @@ No* adiciona(AVL* AVL, int valor) {
     }
  
     return no;
-}
+}**/
 
 void percorrer(No* no) {
     if (no != NULL) {
@@ -131,7 +141,7 @@ int fb(No* no) {
 
 //Rotações
 //Rotação Simples Esquerda
-No* rse(No* no) {
+/**No* rse(No* no) {
     No* pai = no->pai;
     No* direita = no->direita;
     no->direita = direita->esquerda;
@@ -159,4 +169,245 @@ No* rde(No* no) {
 No* rdd(No* no) {
     no->esquerda = rse(no->esquerda);
     return rsd(no);
+}**/
+
+//Minha versão das rotações
+No* rse(No* no, AVL* a) {
+    No* pai = no->pai;
+    No* direita = no->direita;
+    no->direita = direita->esquerda;
+    no->pai = direita;
+    direita->esquerda = no;
+    direita->pai = pai;
+    if(direita->pai== NULL){
+        a->raiz = direita;
+    }
+    return direita;
+}
+
+No* rsd(No* no, AVL* a) {
+    No* pai = no->pai;
+    No* esquerda = no->esquerda;
+    no->esquerda = esquerda->direita;
+    no->pai = esquerda;
+    esquerda->direita = no;
+    esquerda->pai = pai;
+    if(esquerda->pai== NULL){
+        a->raiz = esquerda;
+    }
+    return esquerda;
+}
+
+No* rde(No* no, AVL* a) {
+    no->direita = rsd(no->direita, a);
+    return rse(no,a);
+}  
+
+No* rdd(No* no, AVL* a) {
+    no->esquerda = rse(no->esquerda, a);
+    return rsd(no, a);
+}
+
+//Checa o Balanceamento, aplicando as rotações necessárias
+int checaNovo(No* no, AVL* a){
+    int g, p;
+    No* temp;
+    if (no->pai == NULL){
+        return 0;
+    }
+    g = fb(no->pai);
+    if(g>1){
+        int fbFilho = fb(no->pai->esquerda);
+        if(fbFilho>0){
+            rsd(no->pai, a);
+        } else{
+            rdd(no->pai, a);
+        }
+    } else if (g<-1){
+        int fbFilho = fb(no->pai->direita);
+        if(fbFilho<0){
+            rse(no->pai, a);
+        } else{
+            rde(no->pai, a);
+        }
+    }else{
+        checaNovo(no->pai, a);
+    }
+}
+
+//processo interno de adicionar nó
+No* adicionarNo(No* no, int valor) {
+    if (valor > no->valor) {
+        if (no->direita == NULL) {
+            No* novo = malloc(sizeof(No));
+            novo->valor = valor;
+            novo->pai = no;
+            novo->esquerda = NULL;
+            novo->direita = NULL;
+
+            no->direita = novo;
+				
+            return novo;
+        } else {
+            return adicionarNo(no->direita, valor);
+        }
+    } else {
+        if (no->esquerda == NULL) {
+            No* novo = malloc(sizeof(No));
+			novo->valor = valor;
+            novo->pai = no;
+            novo->esquerda = NULL;
+            novo->direita = NULL;
+			
+            no->esquerda = novo;
+			
+            return novo;
+        } else {
+            return adicionarNo(no->esquerda, valor);
+        }
+    }
+
+}
+
+//Processo de adicionar
+No* adicionar(AVL* arvore, int valor) {
+    No* no;
+    int g =1;
+    if (vazia(arvore)) {
+        no = malloc(sizeof(No));
+        no->valor = valor;
+        no->pai = NULL;
+        no->direita = NULL;
+        no->esquerda = NULL;
+        
+        arvore->raiz = no;
+    } else {
+        no = adicionarNo(arvore->raiz, valor);
+        g = checaNovo(no, arvore);
+    }
+    return no;
+}
+
+//Procura recursiva para achar o nó mais baixo à esquerda
+No* procuraFundaEsq(No* no){
+    if(!no->esquerda && !no->direita){
+        return no;
+    }else if(no->esquerda && no->direita){
+        procuraFundaEsq(no->direita);
+    }else if(!no->esquerda && no->direita){
+        procuraFundaEsq(no->direita);
+    }else{
+        procuraFundaEsq(no->esquerda);
+    }
+}
+
+//Removedor de nós
+void removerNo(No* no, AVL* arvore){
+    No* noNovo;
+    if(!no->pai){
+        if(!no->esquerda && !no->direita){
+            vazia(arvore);
+        //Raiz solo
+        } else if(no->esquerda && no->direita){
+            if(!no->esquerda->direita){
+                no->esquerda->pai = NULL;
+                arvore->raiz = no->esquerda;
+                no->esquerda->direita = no->direita;
+                no->direita->pai = no->esquerda;
+                free(no);
+            } else if(!no->direita->esquerda){
+                no->direita->pai = NULL;
+                arvore->raiz = no->direita;
+                no->direita->esquerda = no->esquerda;
+                no->esquerda->pai = no->direita;
+                free(no);
+            } else{
+                noNovo = procuraFundaEsq(no->esquerda);
+                no->valor = noNovo->valor;
+                if(noNovo->pai->valor < noNovo->valor){
+                    noNovo->pai->direita = NULL;
+                    checaNovo(noNovo->pai,arvore);
+                    free(noNovo);
+                }else{
+                    noNovo->pai->esquerda = NULL;
+                    checaNovo(noNovo->pai,arvore);
+                    free(noNovo);
+                }
+            }
+        } else if(no->esquerda && !no->direita){
+            no->esquerda->pai= NULL;
+            arvore->raiz = no->esquerda;
+            free(no);
+        //Raiz com filho esquerdo
+        } else{
+            no->direita->pai= NULL;
+            arvore->raiz = no->direita;
+            free(no);
+        //Raiz com filho direito
+        }
+    }else{
+        if(!no->esquerda && !no->direita){
+            if(no->pai->valor > no->valor){
+                no->pai->esquerda = NULL;
+                checaNovo(noNovo->pai,arvore);
+                free(no);
+            }else{
+                no->pai->direita = NULL;
+                checaNovo(noNovo->pai,arvore);
+                free(no);
+            }
+            //sem filhos
+        } else if (no->esquerda && no->direita){
+            noNovo = procuraFundaEsq(no->esquerda);
+            no->valor = noNovo->valor;
+            if(noNovo->pai->valor < noNovo->valor){
+                noNovo->pai->direita = NULL;
+                free(noNovo);
+            }else{
+                noNovo->pai->esquerda = NULL;
+                free(noNovo);
+            }
+            //Dois Filhos
+        } else if (no->esquerda && !no->direita){
+            if(no->pai->valor > no->valor){
+                no->pai->esquerda = no->esquerda;
+                no->esquerda->pai = no->pai;
+                free(no);
+            }else{
+                no->pai->direita = no->esquerda;
+                no->esquerda->pai = no->pai;
+                free(no);
+            }
+            //Apenas Filho À Esquerda
+        } else{
+            if(no->pai->valor > no->valor){
+                no->pai->esquerda = no->direita;
+                no->direita->pai = no->pai;
+                free(no);
+            }else{
+                no->pai->direita = no->direita;
+                no->direita->pai = no->pai;
+                free(no);
+            }
+            //Apenas Filho À Direita
+        }   
+    }
+}
+
+//Procura um nó para ver se ele existe, para daí remover
+void procuraPraRemover(No* no, int a, AVL* arvore){
+    if(a == no->valor){
+        removerNo(no, arvore);
+    } else{
+        No *esq = no->esquerda;
+        No *dire = no->direita;
+        if(!esq  && !dire){
+            printf("Esse no nao existe.");
+        }
+        if(a > no->valor){
+            procuraPraRemover(no->direita, a, arvore);
+        } else{
+            procuraPraRemover(no->esquerda, a, arvore);
+        }
+    }
 }
