@@ -28,6 +28,7 @@ void adicionaChave(ArvoreB*, int);
 void removeChave(ArvoreB*, int);
 void removeChaveFolha(NoB*, int);
 int pegaAntecessor(NoB*,int);
+int pegaSucessor(NoB*,int);
 
 
 ArvoreB* criaArvoreB(int ordem) {
@@ -98,7 +99,7 @@ NoB* localizaNoREAL(ArvoreB* arvore, int chave) {
         }
     }
 
-    return 0; //não encontrou	
+    return NULL; //não encontrou	
 }
 
 NoB* localizaNoB(ArvoreB* arvore, int chave) {	// 21/11 - 15:43 QUE ÓDIO DESSA FUNÇÃO TO USANDO ELA DE FORMA ERRADA ATÉ AGORA
@@ -199,7 +200,29 @@ void removeChave(ArvoreB* arvore, int chave){
             }else if(no->total-1 >= arvore->ordem){
                 removeChaveFolha(no,index);                
             }else{                                          // Caso 3 e 4, folha com underflow
+                //Caso 3 empresta dos irmãos
+                int teste = pesquisaBinaria(no->pai, chave);
                 
+                NoB* pai = no->pai;
+                NoB* bro_left = pai->filhos[teste-1];
+                NoB* bro_right = pai->filhos[teste+1];
+                //Empresta Esquerda
+                if(bro_left->total>=arvore->ordem){
+                    int chavepai = pai->chaves[teste-1];
+                    int chaveleft = bro_left->chaves[bro_left->total-1];
+
+                    pai->chaves[teste-1] = chaveleft;
+                    no->chaves[chave] = chavepai; 
+                    bro_left->total--;
+                }
+                
+
+
+                
+                
+                
+
+                //Caso 4 merge
             }
         }else{                                              //Caso 2, não folha
             if(no->filhos[index]->total>=arvore->ordem){
@@ -211,7 +234,8 @@ void removeChave(ArvoreB* arvore, int chave){
                 removeChave(arvore, depois);
                 no->chaves[index] = depois; 
             }else{
-                
+                //Eu não sei ao certo se isso é posssível pensando agora, ah pera, acho que aqui acontece caso tu 
+                // tente tirar da raiz quando ela não é folha talvez
             }
 
             

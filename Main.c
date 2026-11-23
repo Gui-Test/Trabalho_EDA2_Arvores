@@ -1,11 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
-//#include "ARB.h"
+#include <time.h>
+#include "ARB.h"
 #include "ARN.h"
-#include "time.h"
+
 
 int main() {
-    /*
+    
     ArvoreB* arvore = criaArvoreB(1);
     
     adicionaChave(arvore, 12);
@@ -16,11 +17,11 @@ int main() {
     adicionaChave(arvore, 99);
     adicionaChave(arvore, 1);
     adicionaChave(arvore, 20);
-    removeChave(arvore,5);
+    removeChave(arvore,7);
 
     printf("chave (folha?) \n");
     percorreArvoreB(arvore->raiz); 
-    */
+    
 
 
     /*
