@@ -1,8 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include "ARB.h"
+#include "AVL.h"
 #include "ARN.h"
+#include "ARB.h"
+
+
 
 
 int main() {
@@ -17,7 +20,8 @@ int main() {
     adicionaChave(arvore, 99);
     adicionaChave(arvore, 1);
     adicionaChave(arvore, 20);
-    removeChave(arvore,7);
+    adicionaChave(arvore, 40);
+    removeChave(arvore,15);
 
     printf("chave (folha?) \n");
     percorreArvoreB(arvore->raiz); 

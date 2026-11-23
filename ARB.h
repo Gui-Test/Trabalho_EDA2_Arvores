@@ -212,17 +212,30 @@ void removeChave(ArvoreB* arvore, int chave){
                     int chaveleft = bro_left->chaves[bro_left->total-1];
 
                     pai->chaves[teste-1] = chaveleft;
-                    no->chaves[chave] = chavepai; 
+                    no->chaves[index] = chavepai; 
                     bro_left->total--;
-                }
-                
+                //Empresta Direita
+                }else if(bro_right->total>=arvore->ordem){
+                    int chavepai = pai->chaves[teste-1];
+                    int chaveright = bro_right->chaves[0];
 
-
-                
-                
-                
-
+                    pai->chaves[teste-1] = chaveright;
+                    no->chaves[index] = chavepai;
+                    
+                    for(int i = 0;i < bro_right->total; i++){           // Pra arrumar a ordem eu acho
+                        bro_right->chaves[i] = bro_right->chaves[i+1];
+                        bro_right->filhos[i] = bro_right->filhos[i+1];
+                    } 
+                    bro_right->filhos[bro_right->total-1] = bro_right->filhos[bro_right->total];
+                    bro_right->total--;
+                    
                 //Caso 4 merge
+                }else{
+                   
+
+                }             
+                
+
             }
         }else{                                              //Caso 2, não folha
             if(no->filhos[index]->total>=arvore->ordem){

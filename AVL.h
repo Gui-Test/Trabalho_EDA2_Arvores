@@ -31,7 +31,7 @@ No* adicionarNo(No* no, int valor);
 No* adicionar(AVL* arvore, int valor);
 No* procuraFundaEsq(No* no);
 void removerNo(No* no, AVL* arvore);
-void procuraPraRemover(No* no, int a, AVL* arvore)
+void procuraPraRemover(No* no, int a, AVL* arvore);
 
 AVL* cria() {
     AVL *Avl;
