@@ -30,6 +30,10 @@ void removeChaveFolha(NoB*, int);
 int pegaAntecessor(NoB*,int);
 int pegaSucessor(NoB*,int);
 
+int compare(const void* a, const void* b) {
+    return (*(int*)a - *(int*)b);
+}
+
 
 ArvoreB* criaArvoreB(int ordem) {
     ArvoreB* a = malloc(sizeof(ArvoreB));
@@ -201,39 +205,48 @@ void removeChave(ArvoreB* arvore, int chave){
                 removeChaveFolha(no,index);                
             }else{                                          // Caso 3 e 4, folha com underflow
                 //Caso 3 empresta dos irmãos
-                int teste = pesquisaBinaria(no->pai, chave);
+                int idxpai = pesquisaBinaria(no->pai, chave);
                 
                 NoB* pai = no->pai;
-                NoB* bro_left = pai->filhos[teste-1];
-                NoB* bro_right = pai->filhos[teste+1];
+                NoB* bro_left = NULL;
+                NoB* bro_right = NULL;
+                if(idxpai-1>=0){
+                    bro_left = pai->filhos[idxpai-1];
+                }
+                if(idxpai<=pai->total){
+                    bro_right = pai->filhos[idxpai+1];
+                }
                 //Empresta Esquerda
-                if(bro_left->total>=arvore->ordem){
-                    int chavepai = pai->chaves[teste-1];
-                    int chaveleft = bro_left->chaves[bro_left->total-1];
+                if(bro_left != NULL){
+                    if(bro_left->total>=arvore->ordem){
+                        int chavepai = pai->chaves[idxpai-1];
+                        int chaveleft = bro_left->chaves[bro_left->total-1];
 
-                    pai->chaves[teste-1] = chaveleft;
-                    no->chaves[index] = chavepai; 
-                    bro_left->total--;
+                        pai->chaves[idxpai-1] = chaveleft;
+                        no->chaves[index] = chavepai; 
+                        bro_left->total--;
+                    }
                 //Empresta Direita
-                }else if(bro_right->total>=arvore->ordem){
-                    int chavepai = pai->chaves[teste-1];
-                    int chaveright = bro_right->chaves[0];
+                }else if(bro_right != NULL){
+                    if(bro_right->total>=arvore->ordem){
+                        int chavepai = pai->chaves[idxpai];
+                        int chaveright = bro_right->chaves[0];
 
-                    pai->chaves[teste-1] = chaveright;
-                    no->chaves[index] = chavepai;
+                        pai->chaves[idxpai] = chaveright;
+                        no->chaves[index] = chavepai;
                     
-                    for(int i = 0;i < bro_right->total; i++){           // Pra arrumar a ordem eu acho
-                        bro_right->chaves[i] = bro_right->chaves[i+1];
-                        bro_right->filhos[i] = bro_right->filhos[i+1];
-                    } 
-                    bro_right->filhos[bro_right->total-1] = bro_right->filhos[bro_right->total];
-                    bro_right->total--;
-                    
+                        for(int i = 0;i < bro_right->total; i++){           // Pra arrumar a ordem eu acho
+                            bro_right->chaves[i] = bro_right->chaves[i+1];
+                            bro_right->filhos[i] = bro_right->filhos[i+1];
+                        } 
+                        bro_right->filhos[bro_right->total-1] = bro_right->filhos[bro_right->total];
+                        bro_right->total--;
+
+                    }
+                }
+                qsort(no->chaves,no->total,sizeof(int),compare);            //QUE SE EXPLODA!!! QUICKSORT FAÇA SEU TRABALHO!
+                
                 //Caso 4 merge
-                }else{
-                   
-
-                }             
                 
 
             }

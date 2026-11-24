@@ -10,7 +10,7 @@
 
 int main() {
     
-    ArvoreB* arvore = criaArvoreB(1);
+    ArvoreB* arvore = criaArvoreB(2);
     
     adicionaChave(arvore, 12);
     adicionaChave(arvore, 3);
@@ -43,7 +43,7 @@ int main() {
 
 
     /*
-    Teste de Mesa
+    Teste de Mesa 12,3,5,7,15,99,1,20,40
     
     12) [][12][]
 
@@ -90,4 +90,5 @@ int main() {
         [][1][][3][] [][7][] [][15][]     [][99][]
 
     */ 
+   
 }
