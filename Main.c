@@ -1,31 +1,55 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include "AVL.h"
-#include "ARN.h"
-#include "ARB.h"
+#include "funcoes.h"
 
-// gcc Main.c AVL.h ARN.h ARB.h 
+// compilação: gcc Main.c funcoes.h AVL.c ARN.c ARB.c 
 
 int main() {
-    
-    ArvoreB* arvore = criaArvoreB(1);
-    
-    adicionaChave(arvore, 12);
-    adicionaChave(arvore, 3);
-    //adicionaChave(arvore, 5);
-    //adicionaChave(arvore, 7);
-    //adicionaChave(arvore, 15);
-    //adicionaChave(arvore, 99);
-    //adicionaChave(arvore, 1);
-    //adicionaChave(arvore, 20);
-    //adicionaChave(arvore, 40);
-    //removeChave(arvore,5);
-    //adicionaChave(arvore, 25);
-    //removeChave(arvore,15);
+    int tam = 0;
+    srand(time(NULL));
+    /*
+    for(int tam = 1000; tam<=10000;tam+=1000){
+        for(int i = 0; i< tam; i++){
+           int randchave = rand() % tam; 
+        }
+    }
+    */
+    for(int tam = 7; tam<=21;tam+=7){
+        //AVL* Avl = cria();
+        //ArvoreARN* Arn = criaARN();
+        ArvoreB* Ab1 = criaArvoreB(1);
+        
+        for(int i = 0; i< tam; i++){
+           int randchave = rand() % tam;
+           //adicionar(Avl, randchave);
+           //adicionarARN(Arn, randchave);
+           adicionaChave(Ab1, randchave);
+        }
+        
+        
+        //percorrer(Avl->raiz);
+        printf("\n");
+        //percorrerInOrderARN(Arn,Arn->raiz,visitarARN);
+        printf("\n");
+        percorreArvoreB(Ab1->raiz);
+        printf("\n\n");
 
-    printf("chave (folha?) \n");
-    percorreArvoreB(arvore->raiz); 
+        //free(Avl);
+        //free(Arn);
+        //liberarArvoreB(Ab1->raiz);
+        free(Ab1);
+
+    }
+    return 0;
+}
+
+    
+
+    //ArvoreB* AB5 = criaArvoreB(5);
+    //ArvoreB* Ab10 = criaArvoreB(10);
+    
+    
     
 
 
@@ -40,8 +64,25 @@ int main() {
     removerARN(arvoreARN,8);
     printf("\n");
     percorrerInOrderARN(arvoreARN, arvoreARN->raiz, visitarARN);
-        */
+    */
 
+    /*
+    adicionaChave(arvore, 12);
+    adicionaChave(arvore, 3);
+    adicionaChave(arvore, 5);
+    adicionaChave(arvore, 7);
+    adicionaChave(arvore, 15);
+    adicionaChave(arvore, 99);
+    adicionaChave(arvore, 1);
+    adicionaChave(arvore, 20);
+    adicionaChave(arvore, 40);
+    removeChave(arvore,5);
+    adicionaChave(arvore, 25);
+    removeChave(arvore,15);
+
+    printf("chave (folha?) \n");
+    percorreArvoreB(arvore->raiz); 
+    */
 
     /*
     Teste de Mesa 12,3,5,7,15,99,1,20,40
@@ -92,4 +133,4 @@ int main() {
 
     */ 
    
-}
+

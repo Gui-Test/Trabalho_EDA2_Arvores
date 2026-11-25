@@ -1,37 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
-
-typedef struct no {
-    struct no* pai;             //ponteiro para o nó pai
-    struct no* esquerda;        //ponteiro para o nó filho a esquerda
-    struct no* direita;         //ponteiro para o nó filho a direita
-    int valor;                //conteúdo de um nó arbitrário da árvore
-    int altura;
-} No;
-
-typedef struct avl {
-    struct no* raiz;
-} AVL;
-
-AVL* cria();
-int vazia(AVL* AVL);
-int altura(No* no);
-int fb(No* no);
-//No* rse(No* no);
-//No* rsd(No* no);
-//No* rde(No* no);
-//No* rdd(No* no);
-//No* adiciona(AVL* AVL, int valor);
-No* rse(No* no, AVL* a);
-No* rsd(No* no, AVL* a);
-No* rde(No* no, AVL* a);
-No* rdd(No* no, AVL* a);
-int checaNovo(No* no, AVL* a);
-No* adicionarNo(No* no, int valor);
-No* adicionar(AVL* arvore, int valor);
-No* procuraFundaEsq(No* no);
-void removerNo(No* no, AVL* arvore);
-void procuraPraRemover(No* no, int a, AVL* arvore);
+#include "funcoes.h"
 
 AVL* cria() {
     AVL *Avl;
@@ -44,7 +13,7 @@ int vazia(AVL* AVL) {
     return (AVL->raiz == NULL);
 }
 
-/**No* adiciona(AVL* AVL, int valor) {
+/* No* adiciona(AVL* AVL, int valor) {
     No *no = malloc(sizeof(No));
     no->pai = NULL;
     no->direita = NULL;
@@ -106,11 +75,12 @@ int vazia(AVL* AVL) {
     }
  
     return no;
-}**/
+}*/
 
 void percorrer(No* no) {
     if (no != NULL) {
-        printf("percorrer: %i\n", no->valor);
+        //printf("percorrer: %i ", no->valor);
+        printf("%i ", no->valor);
         percorrer(no->esquerda);
         percorrer(no->direita);
     }

@@ -1,35 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-
-typedef struct noB {
-    int total;
-    int folha;
-    int* chaves;
-    struct noB** filhos;
-    struct noB* pai; 
-} NoB;
-
-typedef struct arvoreB {
-  NoB* raiz;
-  int ordem;
-} ArvoreB;
-
-ArvoreB* criaArvoreB(int);
-NoB* criaNoB(ArvoreB*);
-void percorreArvoreB(NoB*);
-int pesquisaBinaria(NoB*, int);
-NoB* localizaNoREAL(ArvoreB*, int);
-NoB* localizaNoB(ArvoreB*, int);
-void adicionaChaveNoB(NoB*, NoB*, int);
-int transbordo(ArvoreB*,NoB*);
-NoB* divideNoB(ArvoreB*, NoB*);
-void adicionaChaveRecursivo(ArvoreB*, NoB*, NoB*, int);
-void adicionaChave(ArvoreB*, int);
-void removeChave(ArvoreB*, int);
-void removeChaveFolha(NoB*, int);
-int pegaAntecessor(NoB*,int);
-int pegaSucessor(NoB*,int);
-void merge(NoB* no, int index);
+#include "funcoes.h"
 
 int compare(const void* a, const void* b) {
     return (*(int*)a - *(int*)b);

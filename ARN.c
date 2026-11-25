@@ -1,39 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
-
-enum coloracao { Vermelho, Preto };
-typedef enum coloracao Cor;
-
-typedef struct noARN {
-    struct noARN* pai;
-    struct noARN* esquerda;
-    struct noARN* direita;
-    Cor cor; //cor do nó (Vermelho ou Preto)
-    int valor;
-} NoARN;
-
-typedef struct arvore {
-    struct noARN* raiz;
-    struct noARN* nulo;
-} ArvoreARN;
-
-ArvoreARN* criaARN();
-int vaziaARN(ArvoreARN* AVL);
-NoARN* criarNoARN(ArvoreARN*, NoARN*, int);
-NoARN* localizarARN(NoARN* no, int valor);
-void adicionarARN(ArvoreARN* arvore, int valor);
-void percorrerARN(ArvoreARN* arvore,NoARN* no, void (*callback)(int));
-void percorrerInOrderARN(ArvoreARN* arvore,NoARN* no, void (*callback)(int));
-void percorrerPreOrderARN(ArvoreARN* arvore,NoARN* no, void (*callback)(int));
-void visitarARN(int valor);
-void balancearARN(ArvoreARN* arvore, NoARN* no);
-void rotacionarEsquerdaARN(ArvoreARN* arvore, NoARN* no);
-void rotacionarDireitaARN(ArvoreARN* arvore, NoARN* no);
-void removerARN(ArvoreARN* arvore, int valor);
-void balancearRemocaoARN(ArvoreARN* arvore, NoARN* no);
-NoARN* menorNoARN(ArvoreARN* arvore, NoARN* no);
-void substituirARN(ArvoreARN* arvore, NoARN* antigo, NoARN* novo);
-
+#include "funcoes.h"
 
 int vaziaARN(ArvoreARN* ARB) {
     return (ARB->raiz == NULL);
@@ -86,7 +53,7 @@ void adicionarARN(ArvoreARN* arvore, int valor) {
         }
     }
 
-    printf("Adicionando %d\n", valor);
+    //printf("Adicionando %d\n", valor);
     NoARN* novo = criarNoARN(arvore,no,valor);
 
     if (valor > no->valor) {
