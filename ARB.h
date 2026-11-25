@@ -29,6 +29,7 @@ void removeChave(ArvoreB*, int);
 void removeChaveFolha(NoB*, int);
 int pegaAntecessor(NoB*,int);
 int pegaSucessor(NoB*,int);
+void merge(NoB* no, int index);
 
 int compare(const void* a, const void* b) {
     return (*(int*)a - *(int*)b);
@@ -208,27 +209,27 @@ void removeChave(ArvoreB* arvore, int chave){
                 int idxpai = pesquisaBinaria(no->pai, chave);
                 
                 NoB* pai = no->pai;
-                NoB* bro_left = NULL;
-                NoB* bro_right = NULL;
+                NoB* bro_left = criaNoB(arvore);
+                NoB* bro_right = criaNoB(arvore);
+    
                 if(idxpai-1>=0){
                     bro_left = pai->filhos[idxpai-1];
                 }
+           
                 if(idxpai<=pai->total){
                     bro_right = pai->filhos[idxpai+1];
                 }
                 //Empresta Esquerda
-                if(bro_left != NULL){
-                    if(bro_left->total>=arvore->ordem){
+                if(bro_left->total > arvore->ordem){
                         int chavepai = pai->chaves[idxpai-1];
                         int chaveleft = bro_left->chaves[bro_left->total-1];
 
                         pai->chaves[idxpai-1] = chaveleft;
                         no->chaves[index] = chavepai; 
                         bro_left->total--;
-                    }
+                  
                 //Empresta Direita
-                }else if(bro_right != NULL){
-                    if(bro_right->total>=arvore->ordem){
+                }else if(bro_right->total > arvore->ordem){
                         int chavepai = pai->chaves[idxpai];
                         int chaveright = bro_right->chaves[0];
 
@@ -241,32 +242,35 @@ void removeChave(ArvoreB* arvore, int chave){
                         } 
                         bro_right->filhos[bro_right->total-1] = bro_right->filhos[bro_right->total];
                         bro_right->total--;
-
-                    }
+   
+                //Caso 4 merge
+                }else{
+                    merge(pai, idxpai);
                 }
                 qsort(no->chaves,no->total,sizeof(int),compare);            //QUE SE EXPLODA!!! QUICKSORT FAÇA SEU TRABALHO!
-                
-                //Caso 4 merge
-                
-
+            
             }
-        }else{                                              //Caso 2, não folha
-            if(no->filhos[index]->total>=arvore->ordem){
+                
+        //Caso 2, não folha        
+        }else{                                              
+            if(no->filhos[index]->total > arvore->ordem){
                 int antes = pegaAntecessor(no,index); 
                 removeChave(arvore, antes);
                 no->chaves[index] = antes;
-            }else if(no->filhos[index+1]->total>=arvore->ordem){
+            }else if(no->filhos[index+1]->total > arvore->ordem){
                 int depois = pegaSucessor(no,index); 
                 removeChave(arvore, depois);
                 no->chaves[index] = depois; 
             }else{
-                //Eu não sei ao certo se isso é posssível pensando agora, ah pera, acho que aqui acontece caso tu 
-                // tente tirar da raiz quando ela não é folha talvez
+                //É precisa disso
+                merge(no, index);
             }
 
             
         }
 
+    }else{
+        printf("\nNão foi possivel localizar a chave");
     }
 
 
@@ -293,4 +297,40 @@ int pegaSucessor(NoB* no, int index){
         atual = atual->filhos[0];
     }
     return atual->chaves[0];
+}
+
+void merge(NoB* no, int index){
+    NoB* filho = no->filhos[index];
+    NoB* irmao = no->filhos[index+1];
+    
+    int tam = no->total;
+    //ok, coloca a chave do pai no filho:
+    filho->chaves[tam-1] = no->chaves[index];
+    
+    //bota as chaves do irmao no filho
+    for (int i = 0; i < irmao->total; ++i) {
+        filho->chaves[i + tam] = irmao->chaves[i];
+    }
+
+    //se não for folha coloca os filhos do irmao no filho
+    if (!filho->folha) {
+        for (int i = 0; i <= irmao->total; i++) {
+            filho->filhos[i + tam] = irmao->filhos[i];
+        }
+    }
+
+    //tira a chave indicada do no
+    for (int i = index + 1; i < no->total; i++) {
+        no->chaves[i - 1] = no->chaves[i];
+    }
+
+    //arruma a ordem dos filhos do no
+    for (int i = index + 2; i <= no->total; i++) {
+        no->filhos[i - 1] = no->filhos[i];
+    }
+
+    filho->total += irmao->total;
+    no->total--;
+
+    free(irmao);
 }

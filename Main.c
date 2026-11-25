@@ -5,23 +5,24 @@
 #include "ARN.h"
 #include "ARB.h"
 
-
-
+// gcc Main.c AVL.h ARN.h ARB.h 
 
 int main() {
     
-    ArvoreB* arvore = criaArvoreB(2);
+    ArvoreB* arvore = criaArvoreB(1);
     
     adicionaChave(arvore, 12);
     adicionaChave(arvore, 3);
-    adicionaChave(arvore, 5);
-    adicionaChave(arvore, 7);
-    adicionaChave(arvore, 15);
-    adicionaChave(arvore, 99);
-    adicionaChave(arvore, 1);
-    adicionaChave(arvore, 20);
-    adicionaChave(arvore, 40);
-    removeChave(arvore,15);
+    //adicionaChave(arvore, 5);
+    //adicionaChave(arvore, 7);
+    //adicionaChave(arvore, 15);
+    //adicionaChave(arvore, 99);
+    //adicionaChave(arvore, 1);
+    //adicionaChave(arvore, 20);
+    //adicionaChave(arvore, 40);
+    //removeChave(arvore,5);
+    //adicionaChave(arvore, 25);
+    //removeChave(arvore,15);
 
     printf("chave (folha?) \n");
     percorreArvoreB(arvore->raiz); 
