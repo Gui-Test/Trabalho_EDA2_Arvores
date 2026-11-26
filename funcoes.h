@@ -55,7 +55,7 @@ typedef struct arvore {
 ArvoreARN* criaARN();
 int vaziaARN(ArvoreARN* AVL);
 NoARN* criarNoARN(ArvoreARN*, NoARN*, int);
-NoARN* localizarARN(NoARN* no, int valor);
+NoARN* localizarARN(ArvoreARN* arvore, int valor);
 void adicionarARN(ArvoreARN* arvore, int valor);
 void percorrerARN(ArvoreARN* arvore,NoARN* no, void (*callback)(int));
 void percorrerInOrderARN(ArvoreARN* arvore,NoARN* no, void (*callback)(int));

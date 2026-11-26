@@ -26,6 +26,9 @@ ArvoreARN* criaARN() {
     arvore->nulo = criarNoARN(arvore, NULL, 0);
     arvore->nulo->cor = Preto;
 
+    arvore->nulo->esquerda = arvore->nulo;
+    arvore->nulo->direita = arvore->nulo;
+
     return arvore;
 }
 
@@ -56,22 +59,24 @@ void adicionarARN(ArvoreARN* arvore, int valor) {
     //printf("Adicionando %d\n", valor);
     NoARN* novo = criarNoARN(arvore,no,valor);
 
-    if (valor > no->valor) {
-            no->direita = novo;
+    if (valor >= no->valor) {
+        no->direita = novo;
     } else {
-            no->esquerda = novo;
+        no->esquerda = novo;
     }
     
     balancearARN(arvore, novo);
     }
 }
 
-NoARN* localizarARN(NoARN* no, int valor) {
-    while (no != NULL) {
+NoARN* localizarARN(ArvoreARN* arvore, int valor) {
+    NoARN* no = arvore->raiz;
+
+    while (no != NULL && no != arvore->nulo) {
         if (no->valor == valor) {
             return no;
         }
-        
+
         no = valor < no->valor ? no->esquerda : no->direita;
     }
 
@@ -79,7 +84,7 @@ NoARN* localizarARN(NoARN* no, int valor) {
 }
 
 void percorrerInOrderARN(ArvoreARN* arvore,NoARN* no, void (*callback)(int)) {
-    if (no != arvore->nulo) {
+    if (no != NULL && no != arvore->nulo) {
         percorrerInOrderARN(arvore,no->esquerda,callback);
         callback(no->valor);
         printf("(cor:%d) ", no->cor);
@@ -88,7 +93,7 @@ void percorrerInOrderARN(ArvoreARN* arvore,NoARN* no, void (*callback)(int)) {
 }
 
 void percorrerPreOrderARN(ArvoreARN* arvore, NoARN* no, void (*callback)(int)) {
-    if (no != arvore->nulo) {
+    if (no != NULL && no != arvore->nulo) {
         callback(no->valor);
         percorrerPreOrderARN(arvore, no->esquerda,callback);
         percorrerPreOrderARN(arvore, no->direita,callback);
