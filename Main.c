@@ -16,13 +16,14 @@ int main() {
     }
     */
    
-    for(int tam = 7; tam<=21;tam+=7){
+    for(int tam = 1000; tam<=10000;tam+=1000){
         AVL* Avl = cria();
         ArvoreARN* Arn = criaARN();
         ArvoreB* Ab1 = criaArvoreB(1);
         
         for(int i = 0; i< tam; i++){
            int randchave = rand() % tam + 1;
+           printf("tam:%d\n", tam);
            printf("randchave:%d\n", randchave);
            adicionar(Avl, randchave);
            printf("avl,\n");
