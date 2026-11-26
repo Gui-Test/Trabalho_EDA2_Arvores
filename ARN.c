@@ -38,21 +38,19 @@ void adicionarARN(ArvoreARN* arvore, int valor) {
     NoARN* no = arvore->raiz;
 
     while (no != arvore->nulo) {
-        if (valor > no->valor) {
+        if (valor >= no->valor) {
             if (no->direita != arvore->nulo) {
                 no = no->direita;
             } else {
                 break;
             }
-        } else if(valor < no->valor) {
+        } else {
             if (no->esquerda != arvore->nulo) {
                 no = no->esquerda;
             } else {
                 break;
             }
-        } else{
-            return;
-        }
+        } 
     }
 
     //printf("Adicionando %d\n", valor);
@@ -63,7 +61,7 @@ void adicionarARN(ArvoreARN* arvore, int valor) {
     } else {
             no->esquerda = novo;
     }
-        
+    
     balancearARN(arvore, novo);
     }
 }
@@ -84,6 +82,7 @@ void percorrerInOrderARN(ArvoreARN* arvore,NoARN* no, void (*callback)(int)) {
     if (no != arvore->nulo) {
         percorrerInOrderARN(arvore,no->esquerda,callback);
         callback(no->valor);
+        printf("(cor:%d) ", no->cor);
         percorrerInOrderARN(arvore,no->direita,callback);
     }
 }
@@ -108,7 +107,9 @@ void balancearARN(ArvoreARN* arvore, NoARN* no) {
                 tio->cor = Preto; //Resolve caso 2
                 no->pai->cor = Preto;
                 no->pai->pai->cor = Vermelho;
-                no = no->pai->pai; //Vai para o nível anterior
+                if(no->pai->pai!=arvore->raiz){
+                    no = no->pai->pai; //Vai para o nível anterior
+                }
             } else {
                 if (no == no->pai->direita) {
                     no = no->pai; //Vai para o nível anterior
@@ -128,18 +129,22 @@ void balancearARN(ArvoreARN* arvore, NoARN* no) {
 
                     no->pai->cor = Preto;
                     no->pai->pai->cor = Vermelho;
-                    no = no->pai->pai; //Vai para o nível anterior
-                } if (no == no->pai->esquerda) {
-                    no = no->pai; //Vai para o nível anterior
-                    rotacionarDireitaARN(arvore, no); //Resolve caso 3
+                    if(no->pai->pai!=arvore->raiz){
+                        no = no->pai->pai; //Vai para o nível anterior
+                    }
                 } else {
-                    no->pai->cor = Preto; //Resolve caso 4
-                    no->pai->pai->cor = Vermelho;
-                    rotacionarEsquerdaARN(arvore, no->pai->pai);
+                    if (no == no->pai->esquerda) {
+                        no = no->pai; //Vai para o nível anterior
+                        rotacionarDireitaARN(arvore, no); //Resolve caso 3
+                    } else {
+                        no->pai->cor = Preto; //Resolve caso 4
+                        no->pai->pai->cor = Vermelho;
+                        rotacionarEsquerdaARN(arvore, no->pai->pai);
+                    }
                 }
             }
-            }
         }
+    }
         arvore->raiz->cor = Preto; //Resolve caso 1
 }
 

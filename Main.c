@@ -15,6 +15,7 @@ int main() {
         }
     }
     */
+   
     for(int tam = 7; tam<=21;tam+=7){
         AVL* Avl = cria();
         ArvoreARN* Arn = criaARN();
@@ -24,11 +25,13 @@ int main() {
            int randchave = rand() % tam + 1;
            printf("randchave:%d\n", randchave);
            adicionar(Avl, randchave);
-           printf("a,\n");
+           printf("avl,\n");
            adicionarARN(Arn, randchave);
-           printf("b,\n");
+           printf("arn,\n");
            adicionaChave(Ab1, randchave);
-           printf("c,\n\n");
+           printf("arb1,\n\n");
+
+           printf("\n");
         }
         
         
@@ -45,6 +48,9 @@ int main() {
         free(Ab1);
 
     }
+    
+    
+
     return 0;
 }
 
@@ -58,6 +64,20 @@ int main() {
 
 
     /*
+    ArvoreARN* Arn = criaARN();
+    adicionarARN(Arn, 9);
+    percorrerInOrderARN(Arn,Arn->raiz,visitarARN);
+    printf("\n");
+    adicionarARN(Arn, 1);
+    percorrerInOrderARN(Arn,Arn->raiz,visitarARN);
+    printf("\n");
+    adicionarARN(Arn, 5);
+    percorrerInOrderARN(Arn,Arn->raiz,visitarARN);
+    printf("\n");
+    adicionarARN(Arn, 6);
+    percorrerInOrderARN(Arn,Arn->raiz,visitarARN);
+    printf("\n");   
+
     ArvoreARN* arvoreARN = criaARN();
     adicionarARN(arvoreARN, 10);
     adicionarARN(arvoreARN, 11);
