@@ -33,6 +33,7 @@ No* adicionar(AVL* arvore, int valor);
 No* procuraFundaEsq(No* no);
 void removerNo(No* no, AVL* arvore);
 void procuraPraRemover(No* no, int a, AVL* arvore);
+void percorrer(No* no);
 
 //---------------------------  Arvore Rubro Negra ------------------------------//
 enum coloracao { Vermelho, Preto };

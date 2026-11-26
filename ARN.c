@@ -44,12 +44,14 @@ void adicionarARN(ArvoreARN* arvore, int valor) {
             } else {
                 break;
             }
-        } else {
+        } else if(valor < no->valor) {
             if (no->esquerda != arvore->nulo) {
                 no = no->esquerda;
             } else {
                 break;
             }
+        } else{
+            return;
         }
     }
 

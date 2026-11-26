@@ -3,7 +3,7 @@
 #include <time.h>
 #include "funcoes.h"
 
-// compilação: gcc Main.c funcoes.h AVL.c ARN.c ARB.c 
+// compilação: gcc Main.c funcoes.h AVL.c ARN.c ARB.c -o Main.exe
 
 int main() {
     int tam = 0;
@@ -11,32 +11,36 @@ int main() {
     /*
     for(int tam = 1000; tam<=10000;tam+=1000){
         for(int i = 0; i< tam; i++){
-           int randchave = rand() % tam; 
+           int randchave = rand() % tam+1; 
         }
     }
     */
     for(int tam = 7; tam<=21;tam+=7){
-        //AVL* Avl = cria();
-        //ArvoreARN* Arn = criaARN();
+        AVL* Avl = cria();
+        ArvoreARN* Arn = criaARN();
         ArvoreB* Ab1 = criaArvoreB(1);
         
         for(int i = 0; i< tam; i++){
-           int randchave = rand() % tam;
-           //adicionar(Avl, randchave);
-           //adicionarARN(Arn, randchave);
+           int randchave = rand() % tam + 1;
+           printf("randchave:%d\n", randchave);
+           adicionar(Avl, randchave);
+           printf("a,\n");
+           adicionarARN(Arn, randchave);
+           printf("b,\n");
            adicionaChave(Ab1, randchave);
+           printf("c,\n\n");
         }
         
         
-        //percorrer(Avl->raiz);
+        percorrer(Avl->raiz);
         printf("\n");
-        //percorrerInOrderARN(Arn,Arn->raiz,visitarARN);
+        percorrerInOrderARN(Arn,Arn->raiz,visitarARN);
         printf("\n");
         percorreArvoreB(Ab1->raiz);
         printf("\n\n");
 
-        //free(Avl);
-        //free(Arn);
+        free(Avl);
+        free(Arn);
         //liberarArvoreB(Ab1->raiz);
         free(Ab1);
 
