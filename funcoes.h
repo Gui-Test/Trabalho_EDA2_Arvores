@@ -3,37 +3,40 @@
 
 //---------------------------  Arvore AVL ------------------------------//
 typedef struct no {
-    struct no* pai;             //ponteiro para o nó pai
-    struct no* esquerda;        //ponteiro para o nó filho a esquerda
-    struct no* direita;         //ponteiro para o nó filho a direita
-    int valor;                //conteúdo de um nó arbitrário da árvore
+    int valor;
     int altura;
+    struct no* pai;
+    struct no* esquerda;
+    struct no* direita;
 } No;
 
 typedef struct avl {
-    struct no* raiz;
+    No* raiz;
 } AVL;
 
 AVL* cria();
-int vazia(AVL* AVL);
+int vazia(AVL* arvore);
+
+void percorrer(No* no);
+
 int altura(No* no);
+void atualizaAltura(No* no);
 int fb(No* no);
-//No* rse(No* no);
-//No* rsd(No* no);
-//No* rde(No* no);
-//No* rdd(No* no);
-//No* adiciona(AVL* AVL, int valor);
+
 No* rse(No* no, AVL* a);
 No* rsd(No* no, AVL* a);
 No* rde(No* no, AVL* a);
 No* rdd(No* no, AVL* a);
+
 int checaNovo(No* no, AVL* a);
+
 No* adicionarNo(No* no, int valor);
 No* adicionar(AVL* arvore, int valor);
+
 No* procuraFundaEsq(No* no);
+
 void removerNo(No* no, AVL* arvore);
-void procuraPraRemover(No* no, int a, AVL* arvore);
-void percorrer(No* no);
+void procuraPraRemover(No* no, int valor, AVL* arvore);
 
 //---------------------------  Arvore Rubro Negra ------------------------------//
 enum coloracao { Vermelho, Preto };

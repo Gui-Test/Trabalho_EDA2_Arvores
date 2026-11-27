@@ -2,382 +2,355 @@
 #include <stdio.h>
 #include "funcoes.h"
 
+// Criação da AVL
 AVL* cria() {
-    AVL *Avl;
-    Avl = malloc(sizeof(AVL));
-    Avl->raiz = NULL;
-    return Avl;
+    AVL* arvore = malloc(sizeof(AVL));
+
+    if (arvore == NULL) {
+        return NULL;
+    }
+
+    arvore->raiz = NULL;
+    return arvore;
 }
 
-int vazia(AVL* AVL) {
-    return (AVL->raiz == NULL);
+// Verifica se a AVL está vazia
+int vazia(AVL* arvore) {
+    return (arvore == NULL || arvore->raiz == NULL);
 }
 
-/* No* adiciona(AVL* AVL, int valor) {
-    No *no = malloc(sizeof(No));
-    no->pai = NULL;
-    no->direita = NULL;
-    no->esquerda = NULL;
-    no->valor = valor;
-    no->altura = 0;
-
-    int dir = 0;
-    
-    if (vazia(AVL)) {
-        AVL->raiz = no;
-        return no;
-    }
-
-    No *aux = malloc(sizeof(No));
-    aux = AVL->raiz;
-    while(aux != NULL){
-        no->pai = aux;
-        if(no->valor > aux->valor){
-            aux = aux->direita;
-            dir = 1;
-        }else{
-            aux = aux->esquerda;
-            dir = 0;
-        }
-    }
-
-    if(dir){
-        no->pai->direita = no;
-    }else{
-        no->pai->esquerda = no;
-    }
-
-    aux = no;
-    
-    while(aux->pai != NULL){
-       int fatorant = fb(aux);
-       int fatordep = fb(aux->pai);
-       printf("%i\n", valor);
-       if(fatordep > 1){
-            if(fatorant > 0){
-                rsd(aux->pai);
-            }else if(fatorant < 0){
-                rdd(aux->pai);
-            }
-       }else if(fatordep < -1){
-            if(fatorant < 0){
-                rse(aux->pai);
-            }else if(fatorant > 0){
-                rde(aux->pai);
-            }
-       }
-
-       if(aux->pai != NULL){
-            aux = aux->pai;
-       }
-       
-
-    }
- 
-    return no;
-}*/
-
+// Percorre a árvore
 void percorrer(No* no) {
     if (no != NULL) {
-        //printf("percorrer: %i ", no->valor);
         printf("%i ", no->valor);
         percorrer(no->esquerda);
         percorrer(no->direita);
     }
 }
 
-//Balanceamento
-int altura(No* no){
-    int esquerda = 0,direita = 0;
-    if (no->esquerda != NULL) {
-        esquerda = altura(no->esquerda) + 1;
+// Altura
+int altura(No* no) {
+    if (no == NULL) {
+        return -1;
     }
-    if (no->direita != NULL) {
-        direita = altura(no->direita) + 1;
-    }
-    return esquerda > direita ? esquerda : direita;
+
+    return no->altura;
 }
 
+// Atualiza a altura de um nó
+void atualizaAltura(No* no) {
+    if (no != NULL) {
+        int esquerda = altura(no->esquerda);
+        int direita = altura(no->direita);
+
+        no->altura = (esquerda > direita ? esquerda : direita) + 1;
+    }
+}
+
+// Fator de balanceamento
 int fb(No* no) {
-    int esquerda = 0,direita = 0;
-    if (no->esquerda != NULL) {
-        esquerda = altura(no->esquerda) + 1;
+    if (no == NULL) {
+        return 0;
     }
-    if (no->direita != NULL) {
-        direita = altura(no->direita) + 1;
-    }
-    return esquerda - direita;
+
+    return altura(no->esquerda) - altura(no->direita);
 }
 
-//Rotações
-//Rotação Simples Esquerda
-/**No* rse(No* no) {
-    No* pai = no->pai;
-    No* direita = no->direita;
-    no->direita = direita->esquerda;
-    no->pai = direita;
-    direita->esquerda = no;
-    direita->pai = pai;
-    return direita;
-}
-//Rotação Simples Direita
-No* rsd(No* no) {
-    No* pai = no->pai;
-    No* esquerda = no->esquerda;
-    no->esquerda = esquerda->direita;
-    no->pai = esquerda;
-    esquerda->direita = no;
-    esquerda->pai = pai;
-    return esquerda;
-}   
-//Rotação Dupla a Esquerda
-No* rde(No* no) {
-    no->direita = rsd(no->direita);
-    return rse(no);
-}
-//Rotação Dupla a Direita
-No* rdd(No* no) {
-    no->esquerda = rse(no->esquerda);
-    return rsd(no);
-}**/
-
-//Minha versão das rotações
+// Rotação simples à esquerda
 No* rse(No* no, AVL* a) {
+    if (no == NULL || no->direita == NULL) {
+        return no;
+    }
+
     No* pai = no->pai;
     No* direita = no->direita;
+
     no->direita = direita->esquerda;
-    no->pai = direita;
-    direita->esquerda = no;
-    direita->pai = pai;
-    if(direita->pai== NULL){
-        a->raiz = direita;
+
+    if (no->direita != NULL) {
+        no->direita->pai = no;
     }
+
+    direita->esquerda = no;
+    no->pai = direita;
+    direita->pai = pai;
+
+    if (pai == NULL) {
+        a->raiz = direita;
+    } else if (pai->esquerda == no) {
+        pai->esquerda = direita;
+    } else {
+        pai->direita = direita;
+    }
+
+    atualizaAltura(no);
+    atualizaAltura(direita);
+
     return direita;
 }
 
+// Rotação simples à direita
 No* rsd(No* no, AVL* a) {
+    if (no == NULL || no->esquerda == NULL) {
+        return no;
+    }
+
     No* pai = no->pai;
     No* esquerda = no->esquerda;
+
     no->esquerda = esquerda->direita;
-    no->pai = esquerda;
-    esquerda->direita = no;
-    esquerda->pai = pai;
-    if(esquerda->pai== NULL){
-        a->raiz = esquerda;
+
+    if (no->esquerda != NULL) {
+        no->esquerda->pai = no;
     }
+
+    esquerda->direita = no;
+    no->pai = esquerda;
+    esquerda->pai = pai;
+
+    if (pai == NULL) {
+        a->raiz = esquerda;
+    } else if (pai->esquerda == no) {
+        pai->esquerda = esquerda;
+    } else {
+        pai->direita = esquerda;
+    }
+
+    atualizaAltura(no);
+    atualizaAltura(esquerda);
+
     return esquerda;
 }
 
+// Rotação dupla à esquerda
 No* rde(No* no, AVL* a) {
-    no->direita = rsd(no->direita, a);
-    return rse(no,a);
-}  
+    if (no == NULL || no->direita == NULL) {
+        return no;
+    }
 
+    rsd(no->direita, a);
+    return rse(no, a);
+}
+
+// Rotação dupla à direita
 No* rdd(No* no, AVL* a) {
-    no->esquerda = rse(no->esquerda, a);
+    if (no == NULL || no->esquerda == NULL) {
+        return no;
+    }
+
+    rse(no->esquerda, a);
     return rsd(no, a);
 }
 
-//Checa o Balanceamento, aplicando as rotações necessárias
-int checaNovo(No* no, AVL* a){
-    int g, p;
-    No* temp;
-    if (no->pai == NULL){
+// Rebalanceamento até a raiz
+int rebalancearDe(AVL* a, No* no) {
+    int rotacoes = 0;
+
+    while (no != NULL) {
+        atualizaAltura(no);
+
+        int fator = fb(no);
+        No* novaRaiz = no;
+
+        if (fator > 1) {
+            if (fb(no->esquerda) < 0) {
+                rse(no->esquerda, a);
+                rotacoes++;
+            }
+
+            novaRaiz = rsd(no, a);
+            rotacoes++;
+
+        } else if (fator < -1) {
+            if (fb(no->direita) > 0) {
+                rsd(no->direita, a);
+                rotacoes++;
+            }
+
+            novaRaiz = rse(no, a);
+            rotacoes++;
+        }
+
+        no = novaRaiz->pai;
+    }
+
+    return rotacoes;
+}
+
+// Checa o balanceamento após inserção
+int checaNovo(No* no, AVL* a) {
+    if (no == NULL || a == NULL) {
         return 0;
     }
-    g = fb(no->pai);
-    if(g>1){
-        int fbFilho = fb(no->pai->esquerda);
-        if(fbFilho>0){
-            rsd(no->pai, a);
-        } else{
-            rdd(no->pai, a);
-        }
-    } else if (g<-1){
-        int fbFilho = fb(no->pai->direita);
-        if(fbFilho<0){
-            rse(no->pai, a);
-        } else{
-            rde(no->pai, a);
-        }
-    }else{
-        checaNovo(no->pai, a);
-    }
+
+    return rebalancearDe(a, no->pai);
 }
 
-//processo interno de adicionar nó
+// Processo interno de adicionar nó
 No* adicionarNo(No* no, int valor) {
-    if (valor > no->valor) {
-        if (no->direita == NULL) {
-            No* novo = malloc(sizeof(No));
-            novo->valor = valor;
-            novo->pai = no;
-            novo->esquerda = NULL;
-            novo->direita = NULL;
+    if (no == NULL) {
+        return NULL;
+    }
 
-            no->direita = novo;
-				
-            return novo;
-        } else {
-            return adicionarNo(no->direita, valor);
+    No* atual = no;
+    No* pai = NULL;
+
+    while (atual != NULL) {
+
+        // Não permite números repetidos
+        if (valor == atual->valor) {
+            return NULL;
         }
-    } else {
-        if (no->esquerda == NULL) {
-            No* novo = malloc(sizeof(No));
-			novo->valor = valor;
-            novo->pai = no;
-            novo->esquerda = NULL;
-            novo->direita = NULL;
-			
-            no->esquerda = novo;
-			
-            return novo;
+
+        pai = atual;
+
+        if (valor > atual->valor) {
+            atual = atual->direita;
         } else {
-            return adicionarNo(no->esquerda, valor);
+            atual = atual->esquerda;
         }
     }
 
+    No* novo = malloc(sizeof(No));
+
+    if (novo == NULL) {
+        return NULL;
+    }
+
+    novo->valor = valor;
+    novo->pai = pai;
+    novo->esquerda = NULL;
+    novo->direita = NULL;
+    novo->altura = 0;
+
+    if (valor > pai->valor) {
+        pai->direita = novo;
+    } else {
+        pai->esquerda = novo;
+    }
+
+    return novo;
 }
 
-//Processo de adicionar
+// Processo de adicionar
 No* adicionar(AVL* arvore, int valor) {
+    if (arvore == NULL) {
+        return NULL;
+    }
+
     No* no;
-    int g =1;
+
     if (vazia(arvore)) {
         no = malloc(sizeof(No));
+
+        if (no == NULL) {
+            return NULL;
+        }
+
         no->valor = valor;
         no->pai = NULL;
         no->direita = NULL;
         no->esquerda = NULL;
-        
+        no->altura = 0;
+
         arvore->raiz = no;
-    } else {
-        no = adicionarNo(arvore->raiz, valor);
-        g = checaNovo(no, arvore);
+
+        return no;
     }
+
+    no = adicionarNo(arvore->raiz, valor);
+
+    // Valor repetido ou falha de alocação
+    if (no == NULL) {
+        return NULL;
+    }
+
+    checaNovo(no, arvore);
+
     return no;
 }
 
-//Procura recursiva para achar o nó mais baixo à esquerda
-No* procuraFundaEsq(No* no){
-    if(!no->esquerda && !no->direita){
-        return no;
-    }else if(no->esquerda && no->direita){
-        procuraFundaEsq(no->direita);
-    }else if(!no->esquerda && no->direita){
-        procuraFundaEsq(no->direita);
-    }else{
-        procuraFundaEsq(no->esquerda);
+// Procura o maior nó da subárvore esquerda
+No* procuraFundaEsq(No* no) {
+    if (no == NULL) {
+        return NULL;
     }
+
+    while (no->direita != NULL) {
+        no = no->direita;
+    }
+
+    return no;
 }
 
-//Removedor de nós
-void removerNo(No* no, AVL* arvore){
-    No* noNovo;
-    if(!no->pai){
-        if(!no->esquerda && !no->direita){
-            vazia(arvore);
-        //Raiz solo
-        } else if(no->esquerda && no->direita){
-            if(!no->esquerda->direita){
-                no->esquerda->pai = NULL;
-                arvore->raiz = no->esquerda;
-                no->esquerda->direita = no->direita;
-                no->direita->pai = no->esquerda;
-                free(no);
-            } else if(!no->direita->esquerda){
-                no->direita->pai = NULL;
-                arvore->raiz = no->direita;
-                no->direita->esquerda = no->esquerda;
-                no->esquerda->pai = no->direita;
-                free(no);
-            } else{
-                noNovo = procuraFundaEsq(no->esquerda);
-                no->valor = noNovo->valor;
-                if(noNovo->pai->valor < noNovo->valor){
-                    noNovo->pai->direita = NULL;
-                    checaNovo(noNovo->pai,arvore);
-                    free(noNovo);
-                }else{
-                    noNovo->pai->esquerda = NULL;
-                    checaNovo(noNovo->pai,arvore);
-                    free(noNovo);
-                }
-            }
-        } else if(no->esquerda && !no->direita){
-            no->esquerda->pai= NULL;
-            arvore->raiz = no->esquerda;
-            free(no);
-        //Raiz com filho esquerdo
-        } else{
-            no->direita->pai= NULL;
-            arvore->raiz = no->direita;
-            free(no);
-        //Raiz com filho direito
-        }
-    }else{
-        if(!no->esquerda && !no->direita){
-            if(no->pai->valor > no->valor){
-                no->pai->esquerda = NULL;
-                checaNovo(noNovo->pai,arvore);
-                free(no);
-            }else{
-                no->pai->direita = NULL;
-                checaNovo(noNovo->pai,arvore);
-                free(no);
-            }
-            //sem filhos
-        } else if (no->esquerda && no->direita){
-            noNovo = procuraFundaEsq(no->esquerda);
-            no->valor = noNovo->valor;
-            if(noNovo->pai->valor < noNovo->valor){
-                noNovo->pai->direita = NULL;
-                free(noNovo);
-            }else{
-                noNovo->pai->esquerda = NULL;
-                free(noNovo);
-            }
-            //Dois Filhos
-        } else if (no->esquerda && !no->direita){
-            if(no->pai->valor > no->valor){
-                no->pai->esquerda = no->esquerda;
-                no->esquerda->pai = no->pai;
-                free(no);
-            }else{
-                no->pai->direita = no->esquerda;
-                no->esquerda->pai = no->pai;
-                free(no);
-            }
-            //Apenas Filho À Esquerda
-        } else{
-            if(no->pai->valor > no->valor){
-                no->pai->esquerda = no->direita;
-                no->direita->pai = no->pai;
-                free(no);
-            }else{
-                no->pai->direita = no->direita;
-                no->direita->pai = no->pai;
-                free(no);
-            }
-            //Apenas Filho À Direita
-        }   
+// Remove um nó
+void removerNo(No* no, AVL* arvore) {
+    if (no == NULL || arvore == NULL) {
+        return;
     }
+
+    // Caso tenha dois filhos
+    if (no->esquerda != NULL && no->direita != NULL) {
+
+        // Encontra o antecessor
+        No* noNovo = procuraFundaEsq(no->esquerda);
+
+        // Copia o valor do antecessor
+        no->valor = noNovo->valor;
+
+        // O nó removido passa a ser o antecessor
+        no = noNovo;
+    }
+
+    // A partir daqui, possui no máximo um filho
+    No* pai = no->pai;
+    No* filho;
+
+    if (no->esquerda != NULL) {
+        filho = no->esquerda;
+    } else {
+        filho = no->direita;
+    }
+
+    // Atualiza o pai do filho
+    if (filho != NULL) {
+        filho->pai = pai;
+    }
+
+    // Atualiza a ligação com o pai
+    if (pai == NULL) {
+        arvore->raiz = filho;
+    } else if (pai->esquerda == no) {
+        pai->esquerda = filho;
+    } else if (pai->direita == no) {
+        pai->direita = filho;
+    }
+
+    free(no);
+
+    // Rebalanceia a partir do pai até a raiz
+    rebalancearDe(arvore, pai);
 }
 
-//Procura um nó para ver se ele existe, para daí remover
-void procuraPraRemover(No* no, int a, AVL* arvore){
-    if(a == no->valor){
-        removerNo(no, arvore);
-    } else{
-        No *esq = no->esquerda;
-        No *dire = no->direita;
-        if(!esq  && !dire){
-            printf("Esse no nao existe.");
+// Procura um nó para removê-lo
+void procuraPraRemover(No* no, int valor, AVL* arvore) {
+    if (arvore == NULL) {
+        return;
+    }
+
+    while (no != NULL) {
+
+        if (valor == no->valor) {
+            removerNo(no, arvore);
+            return;
         }
-        if(a > no->valor){
-            procuraPraRemover(no->direita, a, arvore);
-        } else{
-            procuraPraRemover(no->esquerda, a, arvore);
+
+        if (valor > no->valor) {
+            no = no->direita;
+        } else {
+            no = no->esquerda;
         }
     }
+
+    printf("Esse no nao existe.");
 }

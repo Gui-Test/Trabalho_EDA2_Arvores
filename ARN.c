@@ -87,7 +87,7 @@ void percorrerInOrderARN(ArvoreARN* arvore,NoARN* no, void (*callback)(int)) {
     if (no != NULL && no != arvore->nulo) {
         percorrerInOrderARN(arvore,no->esquerda,callback);
         callback(no->valor);
-        printf("(cor:%d) ", no->cor);
+        //printf("(cor:%d) ", no->cor);
         percorrerInOrderARN(arvore,no->direita,callback);
     }
 }

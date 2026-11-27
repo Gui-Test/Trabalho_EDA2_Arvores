@@ -22,7 +22,7 @@ int main() {
         ArvoreB* Ab1 = criaArvoreB(1);
         
         for(int i = 0; i< tam; i++){
-           int randchave = rand() % tam + 1;
+           int randchave = rand() % (tam*10) ;
            printf("tam:%d\n", tam);
            printf("randchave:%d\n", randchave);
            adicionar(Avl, randchave);
@@ -30,7 +30,7 @@ int main() {
            adicionarARN(Arn, randchave);
            printf("arn,\n");
            adicionaChave(Ab1, randchave);
-           printf("arb1,\n\n");
+           printf("arb1,\n");
 
            printf("\n");
         }
