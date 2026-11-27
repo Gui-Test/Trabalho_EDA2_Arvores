@@ -352,5 +352,5 @@ void procuraPraRemover(No* no, int valor, AVL* arvore) {
         }
     }
 
-    printf("Esse no nao existe.");
+    printf("Esse no nao existe.\n");
 }
