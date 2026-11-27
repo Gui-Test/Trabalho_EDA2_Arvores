@@ -187,7 +187,7 @@ void removeChave(ArvoreB* arvore, int chave){
                     bro_left = pai->filhos[idxpai-1];
                 }
            
-                if(idxpai<=pai->total){
+                if(idxpai<pai->total){
                     bro_right = pai->filhos[idxpai+1];
                 }
                 //Empresta Esquerda
@@ -241,7 +241,7 @@ void removeChave(ArvoreB* arvore, int chave){
         }
 
     }else{
-        printf("\nNão foi possivel localizar a chave");
+        printf("\nNão foi possivel localizar a chave\n");
     }
 
 

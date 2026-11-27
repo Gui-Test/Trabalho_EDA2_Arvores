@@ -21,7 +21,7 @@ int main() {
         ArvoreARN* Arn = criaARN();
         ArvoreB* Ab1 = criaArvoreB(1);
         ArvoreB* Ab5 = criaArvoreB(5);
-        ArvoreB* Ab10 = criaArvoreB(10);
+        //ArvoreB* Ab10 = criaArvoreB(10);
         
         for(int i = 0; i< tam; i++){
            int randchave = rand() % (tam*10) ;
@@ -35,8 +35,8 @@ int main() {
            printf("arb1,\n");
            adicionaChave(Ab5, randchave);
            printf("arb5,\n");
-           adicionaChave(Ab10, randchave);
-           printf("arb10,\n");
+           //adicionaChave(Ab10, randchave);
+           //printf("arb10,\n");
 
            printf("\n");
         }
@@ -53,8 +53,8 @@ int main() {
            printf("tira arb1,\n");
            removeChave(Ab5, randchave);
            printf("tira arb5,\n");
-           removeChave(Ab10, randchave);
-           printf("tira arb10,\n");
+           //removeChave(Ab10, randchave);
+           //printf("tira arb10,\n");
 
            printf("\n");
         }
@@ -72,7 +72,7 @@ int main() {
         //liberarArvoreB(Ab1->raiz);
         free(Ab1);
         free(Ab5);
-        free(Ab10);
+        //free(Ab10);
 
     }
     
