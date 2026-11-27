@@ -221,7 +221,7 @@ No* adicionarNo(No* no, int valor) {
         } else {
             return adicionarNo(no->direita, valor);
         }
-    } else {
+    } else if(valor < no->valor) {
         if (no->esquerda == NULL) {
             No* novo = malloc(sizeof(No));
 			novo->valor = valor;
@@ -235,6 +235,8 @@ No* adicionarNo(No* no, int valor) {
         } else {
             return adicionarNo(no->esquerda, valor);
         }
+    }else{
+        return NULL;
     }
 
 }
@@ -253,7 +255,9 @@ No* adicionar(AVL* arvore, int valor) {
         arvore->raiz = no;
     } else {
         no = adicionarNo(arvore->raiz, valor);
-        g = checaNovo(no, arvore);
+        if (no!=NULL){
+            g = checaNovo(no, arvore);
+        }
     }
     return no;
 }
