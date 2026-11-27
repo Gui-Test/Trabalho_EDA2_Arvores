@@ -8,13 +8,6 @@
 int main() {
     int tam = 0;
     srand(time(NULL));
-    /*
-    for(int tam = 1000; tam<=10000;tam+=1000){
-        for(int i = 0; i< tam; i++){
-           int randchave = rand() % tam+1; 
-        }
-    }
-    */
    
     for(int tam = 1000; tam<=10000;tam+=1000){
         AVL* Avl = cria();
@@ -22,6 +15,9 @@ int main() {
         ArvoreB* Ab1 = criaArvoreB(1);
         ArvoreB* Ab5 = criaArvoreB(5);
         //ArvoreB* Ab10 = criaArvoreB(10);
+
+        int addEsforcoAVL = 0,addEsforcoARN = 0,addEsforcoAB1 = 0,addEsforcoAB5 = 0, addEsforcoAB10 = 0;
+        int takeEsforcoAVL = 0,takeEsforcoARN = 0,takeEsforcoAB1 = 0,takeEsforcoAB5 = 0, takeEsforcoAB10 = 0;
         
         for(int i = 0; i< tam; i++){
            int randchave = rand() % (tam*10) ;
@@ -58,7 +54,20 @@ int main() {
 
            printf("\n");
         }
-        
+
+        /* Parte dos arquivos
+        if(tam == 1000){
+            FILE *add_f ;
+            add_f = fopen("add.csv", "w");
+            FILE *take_f;
+            take_f = fopen("take.csv", "w");
+        }else{
+            FILE *add_f ;
+            add_f = fopen("add.csv", "a");
+            FILE *take_f ;
+            take_f = fopen("take.csv", "a");
+        }
+        */
         
         percorrer(Avl->raiz);
         printf("\n");
