@@ -1,136 +1,94 @@
-#include <stdio.h>
-#include <stdlib.h>
+#ifndef FUNCOES_H
+#define FUNCOES_H
 
-//---------------------------  Arvore AVL ------------------------------//
+/* --------------------------- Arvore AVL --------------------------- */
 typedef struct no {
     int valor;
     int altura;
-    struct no* pai;
-    struct no* esquerda;
-    struct no* direita;
+    struct no *pai;
+    struct no *esquerda;
+    struct no *direita;
 } No;
 
 typedef struct avl {
-    No* raiz;
+    No *raiz;
 } AVL;
 
-AVL* cria();
-int vazia(AVL* arvore);
+AVL *cria(void);
+int vazia(AVL *arvore);
+void percorrer(No *no);
+int altura(No *no);
+void atualizaAltura(No *no);
+int fb(No *no);
+No *rse(No *no, AVL *a);
+No *rsd(No *no, AVL *a);
+No *rde(No *no, AVL *a);
+No *rdd(No *no, AVL *a);
+int checaNovo(No *no, AVL *a);
+No *adicionarNo(No *no, int valor);
+int adicionar(AVL *arvore, int valor);
+No *procuraFundaEsq(No *no);
+void removerNo(No *no, AVL *arvore);
+int procuraPraRemover(No *no, int valor, AVL *arvore);
+void destroiAVL(AVL *arvore);
 
-void percorrer(No* no);
-
-int altura(No* no);
-void atualizaAltura(No* no);
-int fb(No* no);
-
-No* rse(No* no, AVL* a);
-No* rsd(No* no, AVL* a);
-No* rde(No* no, AVL* a);
-No* rdd(No* no, AVL* a);
-
-int checaNovo(No* no, AVL* a);
-
-No* adicionarNo(No* no, int valor);
-No* adicionar(AVL* arvore, int valor);
-
-No* procuraFundaEsq(No* no);
-
-void removerNo(No* no, AVL* arvore);
-void procuraPraRemover(No* no, int valor, AVL* arvore);
-
-//---------------------------  Arvore Rubro Negra ------------------------------//
+/* ---------------------- Arvore Rubro-Negra ------------------------ */
 enum coloracao { Vermelho, Preto };
 typedef enum coloracao Cor;
 
 typedef struct noARN {
-    struct noARN* pai;
-    struct noARN* esquerda;
-    struct noARN* direita;
-    Cor cor; //cor do nó (Vermelho ou Preto)
+    struct noARN *pai;
+    struct noARN *esquerda;
+    struct noARN *direita;
+    Cor cor;
     int valor;
 } NoARN;
 
 typedef struct arvore {
-    struct noARN* raiz;
-    struct noARN* nulo;
+    NoARN *raiz;
+    NoARN *nulo;
 } ArvoreARN;
 
-ArvoreARN* criaARN();
-int vaziaARN(ArvoreARN* AVL);
-NoARN* criarNoARN(ArvoreARN*, NoARN*, int);
-NoARN* localizarARN(ArvoreARN* arvore, int valor);
-void adicionarARN(ArvoreARN* arvore, int valor);
-void percorrerARN(ArvoreARN* arvore,NoARN* no, void (*callback)(int));
-void percorrerInOrderARN(ArvoreARN* arvore,NoARN* no, void (*callback)(int));
-void percorrerPreOrderARN(ArvoreARN* arvore,NoARN* no, void (*callback)(int));
+ArvoreARN *criaARN(void);
+int vaziaARN(ArvoreARN *arvore);
+NoARN *criarNoARN(ArvoreARN *arvore, NoARN *pai, int valor);
+NoARN *localizarARN(ArvoreARN *arvore, int valor);
+int adicionarARN(ArvoreARN *arvore, int valor);
+void percorrerARN(ArvoreARN *arvore, NoARN *no, void (*callback)(int));
+void percorrerInOrderARN(ArvoreARN *arvore, NoARN *no, void (*callback)(int));
+void percorrerPreOrderARN(ArvoreARN *arvore, NoARN *no, void (*callback)(int));
 void visitarARN(int valor);
-void balancearARN(ArvoreARN* arvore, NoARN* no);
-void rotacionarEsquerdaARN(ArvoreARN* arvore, NoARN* no);
-void rotacionarDireitaARN(ArvoreARN* arvore, NoARN* no);
-void removerARN(ArvoreARN* arvore, int valor);
-void balancearRemocaoARN(ArvoreARN* arvore, NoARN* no);
-NoARN* menorNoARN(ArvoreARN* arvore, NoARN* no);
-void substituirARN(ArvoreARN* arvore, NoARN* antigo, NoARN* novo);
+void balancearARN(ArvoreARN *arvore, NoARN *no);
+void rotacionarEsquerdaARN(ArvoreARN *arvore, NoARN *no);
+void rotacionarDireitaARN(ArvoreARN *arvore, NoARN *no);
+int removerARN(ArvoreARN *arvore, int valor);
+void balancearRemocaoARN(ArvoreARN *arvore, NoARN *no);
+NoARN *menorNoARN(ArvoreARN *arvore, NoARN *no);
+void substituirARN(ArvoreARN *arvore, NoARN *antigo, NoARN *novo);
+void destroiArvoreARN(ArvoreARN *arvore);
 
-//---------------------------  Arvore B ------------------------------//
-typedef struct noB {
+/* ---------------------------- Arvore B ---------------------------- */
+typedef struct NoB {
+    int *chaves;
+    struct NoB **filhos;
+    struct NoB *pai;
     int total;
     int folha;
-    int* chaves;
-    struct noB** filhos;
-    struct noB* pai; 
 } NoB;
 
-typedef struct arvoreB {
-  NoB* raiz;
-  int ordem;
+typedef struct ArvoreB {
+    int ordem;
+    NoB *raiz;
 } ArvoreB;
 
-ArvoreB* criaArvoreB(int);
-NoB* criaNoB(ArvoreB*);
-void percorreArvoreB(NoB*);
-int pesquisaBinaria(NoB*, int);
-NoB* localizaNoREAL(NoB*, int);
-NoB* localizaNoB(ArvoreB*, int);
-void adicionaChaveNoB(NoB*, NoB*, int);
-int transbordo(ArvoreB*,NoB*);
-NoB* divideNoB(ArvoreB*, NoB*);
-void adicionaChaveRecursivo(ArvoreB*, NoB*, NoB*, int);
-void adicionaChave(ArvoreB*, int);
-void removeChave(ArvoreB*,NoB*, int);
-void removeChaveFolha(NoB*, int);
-int pegaAntecessor(NoB*,int);
-int pegaSucessor(NoB*,int);
-void merge(NoB* no, int index);
+ArvoreB *criaArvoreB(int ordem);
+NoB *criaNoB(ArvoreB *arvore);
+void percorreArvoreB(NoB *no);
+int pesquisaBinaria(NoB *no, int chave);
+NoB *localizaNoREAL(NoB *no, int chave);
+NoB *localizaNoB(ArvoreB *arvore, int chave);
+int adicionaChave(ArvoreB *arvore, int chave);
+int removeChave(ArvoreB *arvore, NoB *no, int chave);
+void destroiArvoreB(ArvoreB *arvore);
 
-
-//--------------------------- FUNÇÕES DIVERSAS ------------------------------//
-/*
-void liberarArvoreB(NoB *no){
-    if (no != NULL)
-    {
-        // Libera recursivamente todos os filhos
-        if (no->filhos != NULL)
-        {
-            for (int i = 0; i <= no->total; i++)
-            { // Modificado para incluir todos os filhos
-                if (no->filhos[i] != NULL)
-                {
-                    liberarArvoreB(no->filhos[i]);
-                    no->filhos[i] = NULL; // Evita dupla liberação
-                }
-            }
-            free(no->filhos);
-            no->filhos = NULL;
-        }
-
-        // Libera array de chaves
-        if (no->chaves != NULL)
-        {
-            free(no->chaves);
-            no->chaves = NULL;
-        }
-
-        free(no);
-    }
-}*/
+#endif

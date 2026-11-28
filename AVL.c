@@ -2,25 +2,33 @@
 #include <stdio.h>
 #include "funcoes.h"
 
-// Criação da AVL
-AVL* cria() {
-    AVL* arvore = malloc(sizeof(AVL));
+/*
+ * Contador de esforco da AVL.
+ * Sao contabilizados: comparacoes de chaves, visitas durante buscas,
+ * atualizacoes de altura/fator de balanceamento e alteracoes estruturais
+ * de ponteiros realizadas nas rotacoes e remocoes.
+ */
+static int esforcoAVL = 0;
 
-    if (arvore == NULL) {
+static void contaAVL(void) {
+    if (esforcoAVL < 2147483647)
+        esforcoAVL++;
+}
+
+AVL *cria(void) {
+    AVL *arvore = malloc(sizeof(AVL));
+    if (arvore == NULL)
         return NULL;
-    }
 
     arvore->raiz = NULL;
     return arvore;
 }
 
-// Verifica se a AVL está vazia
-int vazia(AVL* arvore) {
+int vazia(AVL *arvore) {
     return (arvore == NULL || arvore->raiz == NULL);
 }
 
-// Percorre a árvore
-void percorrer(No* no) {
+void percorrer(No *no) {
     if (no != NULL) {
         printf("%i ", no->valor);
         percorrer(no->esquerda);
@@ -28,131 +36,132 @@ void percorrer(No* no) {
     }
 }
 
-// Altura
-int altura(No* no) {
-    if (no == NULL) {
+int altura(No *no) {
+    if (no == NULL)
         return -1;
-    }
-
     return no->altura;
 }
 
-// Atualiza a altura de um nó
-void atualizaAltura(No* no) {
+void atualizaAltura(No *no) {
     if (no != NULL) {
         int esquerda = altura(no->esquerda);
         int direita = altura(no->direita);
+        int novaAltura = (esquerda > direita ? esquerda : direita) + 1;
 
-        no->altura = (esquerda > direita ? esquerda : direita) + 1;
+        contaAVL();
+        no->altura = novaAltura;
     }
 }
 
-// Fator de balanceamento
-int fb(No* no) {
-    if (no == NULL) {
+int fb(No *no) {
+    if (no == NULL)
         return 0;
-    }
 
+    contaAVL();
     return altura(no->esquerda) - altura(no->direita);
 }
 
-// Rotação simples à esquerda
-No* rse(No* no, AVL* a) {
-    if (no == NULL || no->direita == NULL) {
+No *rse(No *no, AVL *a) {
+    if (no == NULL || no->direita == NULL)
         return no;
-    }
 
-    No* pai = no->pai;
-    No* direita = no->direita;
+    No *pai = no->pai;
+    No *direita = no->direita;
 
     no->direita = direita->esquerda;
+    contaAVL();
 
     if (no->direita != NULL) {
         no->direita->pai = no;
+        contaAVL();
     }
 
     direita->esquerda = no;
     no->pai = direita;
     direita->pai = pai;
+    esforcoAVL += 3;
 
     if (pai == NULL) {
         a->raiz = direita;
+        contaAVL();
     } else if (pai->esquerda == no) {
         pai->esquerda = direita;
+        contaAVL();
     } else {
         pai->direita = direita;
+        contaAVL();
     }
 
     atualizaAltura(no);
     atualizaAltura(direita);
-
     return direita;
 }
 
-// Rotação simples à direita
-No* rsd(No* no, AVL* a) {
-    if (no == NULL || no->esquerda == NULL) {
+No *rsd(No *no, AVL *a) {
+    if (no == NULL || no->esquerda == NULL)
         return no;
-    }
 
-    No* pai = no->pai;
-    No* esquerda = no->esquerda;
+    No *pai = no->pai;
+    No *esquerda = no->esquerda;
 
     no->esquerda = esquerda->direita;
+    contaAVL();
 
     if (no->esquerda != NULL) {
         no->esquerda->pai = no;
+        contaAVL();
     }
 
     esquerda->direita = no;
     no->pai = esquerda;
     esquerda->pai = pai;
+    esforcoAVL += 3;
 
     if (pai == NULL) {
         a->raiz = esquerda;
+        contaAVL();
     } else if (pai->esquerda == no) {
         pai->esquerda = esquerda;
+        contaAVL();
     } else {
         pai->direita = esquerda;
+        contaAVL();
     }
 
     atualizaAltura(no);
     atualizaAltura(esquerda);
-
     return esquerda;
 }
 
-// Rotação dupla à esquerda
-No* rde(No* no, AVL* a) {
-    if (no == NULL || no->direita == NULL) {
+No *rde(No *no, AVL *a) {
+    if (no == NULL || no->direita == NULL)
         return no;
-    }
 
-    rsd(no->direita, a);
-    return rse(no, a);
+    rse(no->direita, a);
+    return rsd(no, a);
 }
 
-// Rotação dupla à direita
-No* rdd(No* no, AVL* a) {
-    if (no == NULL || no->esquerda == NULL) {
+No *rdd(No *no, AVL *a) {
+    if (no == NULL || no->esquerda == NULL)
         return no;
-    }
 
     rse(no->esquerda, a);
     return rsd(no, a);
 }
 
-// Rebalanceamento até a raiz
-int rebalancearDe(AVL* a, No* no) {
+int rebalancearDe(AVL *a, No *no) {
     int rotacoes = 0;
 
     while (no != NULL) {
+        contaAVL();
         atualizaAltura(no);
 
         int fator = fb(no);
-        No* novaRaiz = no;
+        No *novaRaiz = no;
 
+        contaAVL();
         if (fator > 1) {
+            contaAVL();
             if (fb(no->esquerda) < 0) {
                 rse(no->esquerda, a);
                 rotacoes++;
@@ -160,197 +169,195 @@ int rebalancearDe(AVL* a, No* no) {
 
             novaRaiz = rsd(no, a);
             rotacoes++;
+        } else {
+            contaAVL();
+            if (fator < -1) {
+                contaAVL();
+                if (fb(no->direita) > 0) {
+                    rsd(no->direita, a);
+                    rotacoes++;
+                }
 
-        } else if (fator < -1) {
-            if (fb(no->direita) > 0) {
-                rsd(no->direita, a);
+                novaRaiz = rse(no, a);
                 rotacoes++;
             }
-
-            novaRaiz = rse(no, a);
-            rotacoes++;
         }
 
         no = novaRaiz->pai;
+        contaAVL();
     }
 
     return rotacoes;
 }
 
-// Checa o balanceamento após inserção
-int checaNovo(No* no, AVL* a) {
-    if (no == NULL || a == NULL) {
+int checaNovo(No *no, AVL *a) {
+    if (no == NULL || a == NULL)
         return 0;
-    }
-
     return rebalancearDe(a, no->pai);
 }
 
-// Processo interno de adicionar nó
-No* adicionarNo(No* no, int valor) {
-    if (no == NULL) {
+No *adicionarNo(No *no, int valor) {
+    if (no == NULL)
         return NULL;
-    }
 
-    No* atual = no;
-    No* pai = NULL;
+    No *atual = no;
+    No *pai = NULL;
 
     while (atual != NULL) {
-
-        // Não permite números repetidos
-        if (valor == atual->valor) {
+        contaAVL();
+        if (valor == atual->valor)
             return NULL;
-        }
 
         pai = atual;
-
-        if (valor > atual->valor) {
+        contaAVL();
+        if (valor > atual->valor)
             atual = atual->direita;
-        } else {
+        else
             atual = atual->esquerda;
-        }
+        contaAVL();
     }
 
-    No* novo = malloc(sizeof(No));
-
-    if (novo == NULL) {
+    No *novo = malloc(sizeof(No));
+    if (novo == NULL)
         return NULL;
-    }
 
     novo->valor = valor;
     novo->pai = pai;
     novo->esquerda = NULL;
     novo->direita = NULL;
     novo->altura = 0;
+    esforcoAVL += 5;
 
     if (valor > pai->valor) {
         pai->direita = novo;
+        contaAVL();
     } else {
         pai->esquerda = novo;
+        contaAVL();
     }
 
     return novo;
 }
 
-// Processo de adicionar
-No* adicionar(AVL* arvore, int valor) {
-    if (arvore == NULL) {
-        return NULL;
-    }
+int adicionar(AVL *arvore, int valor) {
+    esforcoAVL = 0;
 
-    No* no;
+    if (arvore == NULL)
+        return 0;
+
+    No *no;
 
     if (vazia(arvore)) {
         no = malloc(sizeof(No));
-
-        if (no == NULL) {
-            return NULL;
-        }
+        if (no == NULL)
+            return 0;
 
         no->valor = valor;
         no->pai = NULL;
         no->direita = NULL;
         no->esquerda = NULL;
         no->altura = 0;
-
         arvore->raiz = no;
-
-        return no;
+        esforcoAVL += 6;
+        return esforcoAVL;
     }
 
     no = adicionarNo(arvore->raiz, valor);
-
-    // Valor repetido ou falha de alocação
-    if (no == NULL) {
-        return NULL;
-    }
+    if (no == NULL)
+        return esforcoAVL;
 
     checaNovo(no, arvore);
-
-    return no;
+    return esforcoAVL;
 }
 
-// Procura o maior nó da subárvore esquerda
-No* procuraFundaEsq(No* no) {
-    if (no == NULL) {
+No *procuraFundaEsq(No *no) {
+    if (no == NULL)
         return NULL;
-    }
 
     while (no->direita != NULL) {
         no = no->direita;
+        contaAVL();
     }
 
     return no;
 }
 
-// Remove um nó
-void removerNo(No* no, AVL* arvore) {
-    if (no == NULL || arvore == NULL) {
+void removerNo(No *no, AVL *arvore) {
+    if (no == NULL || arvore == NULL)
         return;
-    }
 
-    // Caso tenha dois filhos
     if (no->esquerda != NULL && no->direita != NULL) {
-
-        // Encontra o antecessor
-        No* noNovo = procuraFundaEsq(no->esquerda);
-
-        // Copia o valor do antecessor
+        No *noNovo = procuraFundaEsq(no->esquerda);
         no->valor = noNovo->valor;
-
-        // O nó removido passa a ser o antecessor
+        contaAVL();
         no = noNovo;
     }
 
-    // A partir daqui, possui no máximo um filho
-    No* pai = no->pai;
-    No* filho;
+    No *pai = no->pai;
+    No *filho;
 
-    if (no->esquerda != NULL) {
+    if (no->esquerda != NULL)
         filho = no->esquerda;
-    } else {
+    else
         filho = no->direita;
-    }
 
-    // Atualiza o pai do filho
     if (filho != NULL) {
         filho->pai = pai;
+        contaAVL();
     }
 
-    // Atualiza a ligação com o pai
     if (pai == NULL) {
         arvore->raiz = filho;
+        contaAVL();
     } else if (pai->esquerda == no) {
         pai->esquerda = filho;
+        contaAVL();
     } else if (pai->direita == no) {
         pai->direita = filho;
+        contaAVL();
     }
 
     free(no);
+    contaAVL();
 
-    // Rebalanceia a partir do pai até a raiz
     rebalancearDe(arvore, pai);
 }
 
-// Procura um nó para removê-lo
-void procuraPraRemover(No* no, int valor, AVL* arvore) {
-    if (arvore == NULL) {
-        return;
-    }
+int procuraPraRemover(No *no, int valor, AVL *arvore) {
+    esforcoAVL = 0;
+
+    if (arvore == NULL)
+        return 0;
 
     while (no != NULL) {
-
+        contaAVL();
         if (valor == no->valor) {
             removerNo(no, arvore);
-            return;
+            return esforcoAVL;
         }
 
-        if (valor > no->valor) {
+        contaAVL();
+        if (valor > no->valor)
             no = no->direita;
-        } else {
+        else
             no = no->esquerda;
-        }
+        contaAVL();
     }
 
-    printf("Esse no nao existe.\n");
+    return esforcoAVL;
+}
+
+static void destroiNoAVL(No *no) {
+    if (no == NULL)
+        return;
+    destroiNoAVL(no->esquerda);
+    destroiNoAVL(no->direita);
+    free(no);
+}
+
+void destroiAVL(AVL *arvore) {
+    if (arvore == NULL)
+        return;
+    destroiNoAVL(arvore->raiz);
+    free(arvore);
 }

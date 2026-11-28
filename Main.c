@@ -3,224 +3,163 @@
 #include <time.h>
 #include "funcoes.h"
 
-// compilação: gcc Main.c funcoes.h AVL.c ARN.c ARB.c -o Main.exe
+#define MAX_N 10000
+#define PASSO 1000
+#define AMOSTRAS 10
 
-int main() {
-    int tam = 0;
-    srand(time(NULL));
-   
-    for(int tam = 1000; tam<=10000;tam+=1000){
-        AVL* Avl = cria();
-        ArvoreARN* Arn = criaARN();
-        ArvoreB* Ab1 = criaArvoreB(1);
-        ArvoreB* Ab5 = criaArvoreB(5);
-        //ArvoreB* Ab10 = criaArvoreB(10);
-
-        int addAVL = 0,addARN = 0,addAB1 = 0,addAB5 = 0, addAB10 = 0;
-        int takeAVL = 0,takeARN = 0,takeAB1 = 0,takeAB5 = 0, takeAB10 = 0;
-        
-        for(int i = 0; i< tam; i++){
-           int randchave = rand() % 10000 ;
-           printf("tam:%d\n", tam);
-           printf("randchave:%d\n", randchave);
-           adicionar(Avl, randchave);
-           printf("avl,\n");
-           adicionarARN(Arn, randchave);
-           printf("arn,\n");
-           adicionaChave(Ab1, randchave);
-           printf("arb1,\n");
-           adicionaChave(Ab5, randchave);
-           printf("arb5,\n");
-           //adicionaChave(Ab10, randchave);
-           //printf("arb10,\n");
-
-           printf("\n");
-        }
-
-        
-        for(int i = 0; i< tam; i++){
-           int randchave = rand() % 10000 ;
-           printf("tam:%d\n", tam);
-           printf("randchave:%d\n", randchave);
-           procuraPraRemover(Avl->raiz, randchave, Avl);
-           printf("tira avl,\n");
-           removerARN(Arn, randchave);
-           printf("tira arn,\n");
-           removeChave(Ab1,Ab1->raiz, randchave);
-           printf("tira arb1,\n");
-           removeChave(Ab5,Ab5->raiz, randchave);
-           printf("tira arb5,\n");
-           //removeChave(Ab10, randchave);
-           //printf("tira arb10,\n");
-
-           printf("\n");
-        }
-
-        float mediaAddAVL = addAVL/tam;
-        float mediaAddARN = addARN/tam;
-        float mediaAddAB1 = addAB1/tam;
-        float mediaAddAB5 = addAB5/tam;
-        float mediaAddAB10 = addAB10/tam;
-
-        float mediatakeAVL = takeAVL/tam;
-        float mediatakeARN = takeARN/tam;
-        float mediatakeAB1 = takeAB1/tam;
-        float mediatakeAB5 = takeAB5/tam;
-        float mediatakeAB10 = takeAB10/tam;
-        
-
-        /* Parte dos arquivos
-        if(tam == 1000){
-            FILE *add_f ;
-            add_f = fopen("add.csv", "w");
-            FILE *take_f;
-            take_f = fopen("take.csv", "w");
-
-            fprintf(add_f, "Tamanho Conjunto,Media AVL,Media ARN,Media ARB1,Media ARB5, Media ARB10");
-            fprintf(add_f, "%i,%f,%f,%f,%f", tam, mediaAddAVL,mediaAddARN,mediaAddAB1,mediaAddAB5,mediaAddAB10);
-            
-            fprintf(take_f, "Tamanho Conjunto,Media AVL,Media ARN,Media ARB1,Media ARB5, Media ARB10");
-            fprintf(take_f, "%i,%f,%f,%f,%f", tam, mediatakeAVL,mediatakeARN,mediatakeAB1,mediatakeAB5,mediatakeAB10);
-
-            fclose(add_f);
-            fclose(take_f);
-        }else{
-            FILE *add_f ;
-            add_f = fopen("add.csv", "a");
-            FILE *take_f ;
-            take_f = fopen("take.csv", "a");
-
-            fprintf(add_f, "%i,%f,%f,%f,%f", tam, mediaAddAVL,mediaAddARN,mediaAddAB1,mediaAddAB5,mediaAddAB10);
-            fprintf(take_f, "%i,%f,%f,%f,%f", tam, mediatakeAVL,mediatakeARN,mediatakeAB1,mediatakeAB5,mediatakeAB10);
-
-            fclose(add_f);
-            fclose(take_f);
-        }
-
-        */
-        
-        //percorrer(Avl->raiz);
-        //printf("\n");
-        //percorrerInOrderARN(Arn,Arn->raiz,visitarARN);
-        //printf("\n");
-        //percorreArvoreB(Ab1->raiz);
-        //printf("\n\n");
-
-        free(Avl);
-        free(Arn);
-        //liberarArvoreB(Ab1->raiz);
-        free(Ab1);
-        free(Ab5);
-        //free(Ab10);
-
+static void embaralhar(int vetor[], int tamanho) {
+    for (int i = tamanho - 1; i > 0; i--) {
+        int j = rand() % (i + 1);
+        int aux = vetor[i];
+        vetor[i] = vetor[j];
+        vetor[j] = aux;
     }
-    
-    
-
-    return 0;
 }
 
-    
+int main(void) {
+    srand((unsigned)time(NULL));
 
-    //ArvoreB* AB5 = criaArvoreB(5);
-    //ArvoreB* Ab10 = criaArvoreB(10);
-    
-    
-    
+    FILE *csvAdd = fopen("adicao.csv", "w");
+    FILE *csvRemove = fopen("remocao.csv", "w");
 
+    if (csvAdd == NULL || csvRemove == NULL) {
+        printf("Erro ao criar os arquivos CSV.\n");
+        if (csvAdd != NULL) fclose(csvAdd);
+        if (csvRemove != NULL) fclose(csvRemove);
+        return 1;
+    }
 
-    /*
-    ArvoreARN* Arn = criaARN();
-    adicionarARN(Arn, 9);
-    percorrerInOrderARN(Arn,Arn->raiz,visitarARN);
-    printf("\n");
-    adicionarARN(Arn, 1);
-    percorrerInOrderARN(Arn,Arn->raiz,visitarARN);
-    printf("\n");
-    adicionarARN(Arn, 5);
-    percorrerInOrderARN(Arn,Arn->raiz,visitarARN);
-    printf("\n");
-    adicionarARN(Arn, 6);
-    percorrerInOrderARN(Arn,Arn->raiz,visitarARN);
-    printf("\n");   
+    fprintf(csvAdd, "Quantidade_de_nos,AVL,ARN,ARB_1,ARB_5,ARB_10\n");
+    fprintf(csvRemove, "Quantidade_de_nos,AVL,ARN,ARB_1,ARB_5,ARB_10\n");
 
-    ArvoreARN* arvoreARN = criaARN();
-    adicionarARN(arvoreARN, 10);
-    adicionarARN(arvoreARN, 11);
-    adicionarARN(arvoreARN, 2);
-    adicionarARN(arvoreARN, 8);
-    adicionarARN(arvoreARN, 9);
-    percorrerInOrderARN(arvoreARN, arvoreARN->raiz, visitarARN);
-    removerARN(arvoreARN,8);
-    printf("\n");
-    percorrerInOrderARN(arvoreARN, arvoreARN->raiz, visitarARN);
-    */
+    int universo[MAX_N];
+    int extras[MAX_N];
+    int ativos[MAX_N + 1];
 
-    /*
-    adicionaChave(arvore, 12);
-    adicionaChave(arvore, 3);
-    adicionaChave(arvore, 5);
-    adicionaChave(arvore, 7);
-    adicionaChave(arvore, 15);
-    adicionaChave(arvore, 99);
-    adicionaChave(arvore, 1);
-    adicionaChave(arvore, 20);
-    adicionaChave(arvore, 40);
-    removeChave(arvore,5);
-    adicionaChave(arvore, 25);
-    removeChave(arvore,15);
+    /* [nivel][estrutura] acumula os dez resultados de cada nivel. */
+    long long somaAdd[10][5] = {{0}};
+    long long somaRemove[10][5] = {{0}};
 
-    printf("chave (folha?) \n");
-    percorreArvoreB(arvore->raiz); 
-    */
+    /* Cada amostra percorre todos os niveis, de 1000 a 10000. */
+    for (int amostra = 0; amostra < AMOSTRAS; amostra++) {
+        printf("\n========== AMOSTRA %d/%d ==========\n",
+               amostra + 1, AMOSTRAS);
 
-    /*
-    Teste de Mesa 12,3,5,7,15,99,1,20,40
-    
-    12) [][12][]
+        /* Chaves iniciais: 0 a 9999, sem repeticao. */
+        for (int i = 0; i < MAX_N; i++)
+            universo[i] = i;
 
-    3)  [][3][][12][]
-    
-    5)  
-            [][5][]
-           /      \
-        [][3][] [][12][]
+        /* Chaves extras: 10000 a 19999, sem sobreposicao. */
+        for (int i = 0; i < MAX_N; i++)
+            extras[i] = MAX_N + i;
 
-    7)
-            [][5][]
-           /      \
-        [][3][] [][7][][12][]
-    
-    15)     
-            [][5][][12][]
-           /      \      \
-        [][3][] [][7][] [][15][]
+        embaralhar(universo, MAX_N);
+        embaralhar(extras, MAX_N);
 
-    99)     
-            [][5][][12][]
-           /      \      \
-        [][3][] [][7][] [][15][][99][]
-    
-    1)
-                [][5][][12][]
-                /     \      \
-        [][1][][3][] [][7][] [][15][][99][]
-    
-    20)
-                [][5][][12][]
-                /     \      \
-        [][1][][3][] [][7][] [][15][][20][][99][]
+        AVL *avl = cria();
+        ArvoreARN *arn = criaARN();
+        ArvoreB *ab1 = criaArvoreB(1);
+        ArvoreB *ab5 = criaArvoreB(5);
+        ArvoreB *ab10 = criaArvoreB(10);
 
-                [][5][][12][][20][]
-                /     \      \
-        [][1][][3][] [][7][] [][15][][99][]
+        if (avl == NULL || arn == NULL || ab1 == NULL ||
+            ab5 == NULL || ab10 == NULL) {
+            printf("Erro ao criar uma ou mais arvores.\n");
+            destroiAVL(avl);
+            destroiArvoreARN(arn);
+            destroiArvoreB(ab1);
+            destroiArvoreB(ab5);
+            destroiArvoreB(ab10);
+            fclose(csvAdd);
+            fclose(csvRemove);
+            return 1;
+        }
 
-                        [][12][]
-                      /          \
-                [][5][]          [][20][]
-                /     \          /        \
-        [][1][][3][] [][7][] [][15][]     [][99][]
+        int qtdAtivos = 0;
 
-    */ 
-   
+        for (int nivel = 1; nivel <= 10; nivel++) {
+            int tam = nivel * PASSO;
+            int inicio = (nivel - 1) * PASSO;
 
+            printf("Amostra %d - conjunto com %d nos\n",
+                   amostra + 1, tam);
+
+            /* Acrescenta somente o novo bloco de 1000 chaves. */
+            for (int i = inicio; i < tam; i++) {
+                int chave = universo[i];
+
+                /* A populacao inicial nao entra na medicao. */
+                (void)adicionar(avl, chave);
+                (void)adicionarARN(arn, chave);
+                (void)adicionaChave(ab1, chave);
+                (void)adicionaChave(ab5, chave);
+                (void)adicionaChave(ab10, chave);
+
+                ativos[qtdAtivos++] = chave;
+            }
+
+            /* ---------------- UMA ADICAO MEDIDA ---------------- */
+            /* A chave extra nao aparece no conjunto inicial. */
+            int chaveAdd = extras[nivel - 1];
+
+            somaAdd[nivel - 1][0] += adicionar(avl, chaveAdd);
+            somaAdd[nivel - 1][1] += adicionarARN(arn, chaveAdd);
+            somaAdd[nivel - 1][2] += adicionaChave(ab1, chaveAdd);
+            somaAdd[nivel - 1][3] += adicionaChave(ab5, chaveAdd);
+            somaAdd[nivel - 1][4] += adicionaChave(ab10, chaveAdd);
+
+            ativos[qtdAtivos++] = chaveAdd;
+
+            /* ---------------- UMA REMOCAO MEDIDA ---------------- */
+            /* Sorteia uma chave entre as que ja existiam antes da adicao.
+               Assim a remocao nao desfaz imediatamente a adicao medida. */
+            int pos = rand() % tam;
+            int chaveRemove = ativos[pos];
+
+            somaRemove[nivel - 1][0] +=
+                procuraPraRemover(avl->raiz, chaveRemove, avl);
+            somaRemove[nivel - 1][1] += removerARN(arn, chaveRemove);
+            somaRemove[nivel - 1][2] += removeChave(ab1, ab1->raiz, chaveRemove);
+            somaRemove[nivel - 1][3] += removeChave(ab5, ab5->raiz, chaveRemove);
+            somaRemove[nivel - 1][4] += removeChave(ab10, ab10->raiz, chaveRemove);
+
+            /* Atualiza o vetor de chaves presentes nas arvores. */
+            ativos[pos] = ativos[qtdAtivos - 1];
+            qtdAtivos--;
+        }
+
+        /* Libera todos os nos antes de iniciar a proxima amostra. */
+        destroiAVL(avl);
+        destroiArvoreARN(arn);
+        destroiArvoreB(ab1);
+        destroiArvoreB(ab5);
+        destroiArvoreB(ab10);
+    }
+
+    /* Calcula a media das dez operacoes medidas em cada nivel. */
+    for (int nivel = 0; nivel < 10; nivel++) {
+        int tam = (nivel + 1) * PASSO;
+        double mediaAdd[5];
+        double mediaRemove[5];
+
+        for (int estrutura = 0; estrutura < 5; estrutura++) {
+            mediaAdd[estrutura] = somaAdd[nivel][estrutura] / (double)AMOSTRAS;
+            mediaRemove[estrutura] = somaRemove[nivel][estrutura] / (double)AMOSTRAS;
+        }
+
+        fprintf(csvAdd, "%d,%.2f,%.2f,%.2f,%.2f,%.2f\n",
+                tam, mediaAdd[0], mediaAdd[1], mediaAdd[2],
+                mediaAdd[3], mediaAdd[4]);
+
+        fprintf(csvRemove, "%d,%.2f,%.2f,%.2f,%.2f,%.2f\n",
+                tam, mediaRemove[0], mediaRemove[1], mediaRemove[2],
+                mediaRemove[3], mediaRemove[4]);
+    }
+
+    fclose(csvAdd);
+    fclose(csvRemove);
+
+    printf("\nExperimento finalizado.\n");
+    printf("Arquivos gerados: adicao.csv e remocao.csv\n");
+    return 0;
+}
