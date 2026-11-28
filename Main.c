@@ -16,11 +16,11 @@ int main() {
         ArvoreB* Ab5 = criaArvoreB(5);
         //ArvoreB* Ab10 = criaArvoreB(10);
 
-        int addEsforcoAVL = 0,addEsforcoARN = 0,addEsforcoAB1 = 0,addEsforcoAB5 = 0, addEsforcoAB10 = 0;
-        int takeEsforcoAVL = 0,takeEsforcoARN = 0,takeEsforcoAB1 = 0,takeEsforcoAB5 = 0, takeEsforcoAB10 = 0;
+        int addAVL = 0,addARN = 0,addAB1 = 0,addAB5 = 0, addAB10 = 0;
+        int takeAVL = 0,takeARN = 0,takeAB1 = 0,takeAB5 = 0, takeAB10 = 0;
         
         for(int i = 0; i< tam; i++){
-           int randchave = rand() % (tam*10) ;
+           int randchave = rand() % 10000 ;
            printf("tam:%d\n", tam);
            printf("randchave:%d\n", randchave);
            adicionar(Avl, randchave);
@@ -37,17 +37,18 @@ int main() {
            printf("\n");
         }
 
+        
         for(int i = 0; i< tam; i++){
-           int randchave = rand() % (tam*10) ;
+           int randchave = rand() % 10000 ;
            printf("tam:%d\n", tam);
            printf("randchave:%d\n", randchave);
            procuraPraRemover(Avl->raiz, randchave, Avl);
            printf("tira avl,\n");
            removerARN(Arn, randchave);
            printf("tira arn,\n");
-           removeChave(Ab1, randchave);
+           removeChave(Ab1,Ab1->raiz, randchave);
            printf("tira arb1,\n");
-           removeChave(Ab5, randchave);
+           removeChave(Ab5,Ab5->raiz, randchave);
            printf("tira arb5,\n");
            //removeChave(Ab10, randchave);
            //printf("tira arb10,\n");
@@ -55,26 +56,55 @@ int main() {
            printf("\n");
         }
 
+        float mediaAddAVL = addAVL/tam;
+        float mediaAddARN = addARN/tam;
+        float mediaAddAB1 = addAB1/tam;
+        float mediaAddAB5 = addAB5/tam;
+        float mediaAddAB10 = addAB10/tam;
+
+        float mediatakeAVL = takeAVL/tam;
+        float mediatakeARN = takeARN/tam;
+        float mediatakeAB1 = takeAB1/tam;
+        float mediatakeAB5 = takeAB5/tam;
+        float mediatakeAB10 = takeAB10/tam;
+        
+
         /* Parte dos arquivos
         if(tam == 1000){
             FILE *add_f ;
             add_f = fopen("add.csv", "w");
             FILE *take_f;
             take_f = fopen("take.csv", "w");
+
+            fprintf(add_f, "Tamanho Conjunto,Media AVL,Media ARN,Media ARB1,Media ARB5, Media ARB10");
+            fprintf(add_f, "%i,%f,%f,%f,%f", tam, mediaAddAVL,mediaAddARN,mediaAddAB1,mediaAddAB5,mediaAddAB10);
+            
+            fprintf(take_f, "Tamanho Conjunto,Media AVL,Media ARN,Media ARB1,Media ARB5, Media ARB10");
+            fprintf(take_f, "%i,%f,%f,%f,%f", tam, mediatakeAVL,mediatakeARN,mediatakeAB1,mediatakeAB5,mediatakeAB10);
+
+            fclose(add_f);
+            fclose(take_f);
         }else{
             FILE *add_f ;
             add_f = fopen("add.csv", "a");
             FILE *take_f ;
             take_f = fopen("take.csv", "a");
+
+            fprintf(add_f, "%i,%f,%f,%f,%f", tam, mediaAddAVL,mediaAddARN,mediaAddAB1,mediaAddAB5,mediaAddAB10);
+            fprintf(take_f, "%i,%f,%f,%f,%f", tam, mediatakeAVL,mediatakeARN,mediatakeAB1,mediatakeAB5,mediatakeAB10);
+
+            fclose(add_f);
+            fclose(take_f);
         }
+
         */
         
-        percorrer(Avl->raiz);
-        printf("\n");
-        percorrerInOrderARN(Arn,Arn->raiz,visitarARN);
-        printf("\n");
-        percorreArvoreB(Ab1->raiz);
-        printf("\n\n");
+        //percorrer(Avl->raiz);
+        //printf("\n");
+        //percorrerInOrderARN(Arn,Arn->raiz,visitarARN);
+        //printf("\n");
+        //percorreArvoreB(Ab1->raiz);
+        //printf("\n\n");
 
         free(Avl);
         free(Arn);

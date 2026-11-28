@@ -62,8 +62,8 @@ int pesquisaBinaria(NoB* no, int chave) {
     return inicio; //não encontrou	
 }
 
-NoB* localizaNoREAL(ArvoreB* arvore, int chave) {	
-    NoB *no = arvore->raiz;
+NoB* localizaNoREAL(NoB* nob, int chave) {	
+    NoB *no = nob;
     
     while (no != NULL) {
         int i = pesquisaBinaria(no, chave);
@@ -95,6 +95,10 @@ NoB* localizaNoB(ArvoreB* arvore, int chave) {	// 21/11 - 15:43 QUE ÓDIO DESSA 
 
 void adicionaChaveNoB(NoB* no, NoB* novo, int chave) {
     int i = pesquisaBinaria(no, chave);
+    if(no->chaves[i] == chave){
+        printf("YES\n");
+        return ;
+    }
     
     for (int j = no->total - 1; j >= i; j--) {
         no->chaves[j + 1] = no->chaves[j];
@@ -164,8 +168,8 @@ void adicionaChave(ArvoreB* arvore, int chave) {
     adicionaChaveRecursivo(arvore, no, NULL, chave);
 }
  
-void removeChave(ArvoreB* arvore, int chave){
-    NoB* no = localizaNoREAL(arvore, chave);
+void removeChave(ArvoreB* arvore, NoB* nob, int chave){
+    NoB* no = localizaNoREAL(nob, chave);
     
     if(no!=NULL){
         int index = pesquisaBinaria(no,chave);
@@ -182,6 +186,7 @@ void removeChave(ArvoreB* arvore, int chave){
                 NoB* pai = no->pai;
                 NoB* bro_left = criaNoB(arvore);
                 NoB* bro_right = criaNoB(arvore);
+                int muito_direita = 0;
     
                 if(idxpai-1>=0){
                     bro_left = pai->filhos[idxpai-1];
@@ -189,6 +194,8 @@ void removeChave(ArvoreB* arvore, int chave){
            
                 if(idxpai<pai->total){
                     bro_right = pai->filhos[idxpai+1];
+                }else{
+                    muito_direita = 1;
                 }
                 //Empresta Esquerda
                 if(bro_left->total > arvore->ordem){
@@ -216,21 +223,26 @@ void removeChave(ArvoreB* arvore, int chave){
    
                 //Caso 4 merge
                 }else{
-                    merge(pai, idxpai);
+                    if(muito_direita){
+                        merge(pai, idxpai-1);
+                    }else{
+                        merge(pai, idxpai);
+                    }
                 }
-                qsort(no->chaves,no->total,sizeof(int),compare);            //QUE SE EXPLODA!!! QUICKSORT FAÇA SEU TRABALHO!
-            
+                    if(!muito_direita){
+                        qsort(no->chaves,no->total,sizeof(int),compare);            //QUE SE EXPLODA!!! QUICKSORT FAÇA SEU TRABALHO!
+                    }
             }
                 
         //Caso 2, não folha        
         }else{                                              
             if(no->filhos[index]->total > arvore->ordem){
                 int antes = pegaAntecessor(no,index); 
-                removeChave(arvore, antes);
+                removeChave(arvore, no->filhos[index], antes);
                 no->chaves[index] = antes;
             }else if(no->filhos[index+1]->total > arvore->ordem){
                 int depois = pegaSucessor(no,index); 
-                removeChave(arvore, depois);
+                removeChave(arvore,no->filhos[index+1], depois);
                 no->chaves[index] = depois; 
             }else{
                 //É precisa disso
