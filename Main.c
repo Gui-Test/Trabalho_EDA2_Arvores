@@ -36,20 +36,17 @@ int main(void) {
     int extras[MAX_N];
     int ativos[MAX_N + 1];
 
-    /* [nivel][estrutura] acumula os dez resultados de cada nivel. */
+   
     long long somaAdd[10][5] = {{0}};
     long long somaRemove[10][5] = {{0}};
 
-    /* Cada amostra percorre todos os niveis, de 1000 a 10000. */
+    
     for (int amostra = 0; amostra < AMOSTRAS; amostra++) {
-        printf("\n========== AMOSTRA %d/%d ==========\n",
-               amostra + 1, AMOSTRAS);
+        printf("\n           AMOSTRA %d              \n", amostra + 1);
 
-        /* Chaves iniciais: 0 a 9999, sem repeticao. */
         for (int i = 0; i < MAX_N; i++)
             universo[i] = i;
 
-        /* Chaves extras: 10000 a 19999, sem sobreposicao. */
         for (int i = 0; i < MAX_N; i++)
             extras[i] = MAX_N + i;
 
@@ -84,11 +81,9 @@ int main(void) {
             printf("Amostra %d - conjunto com %d nos\n",
                    amostra + 1, tam);
 
-            /* Acrescenta somente o novo bloco de 1000 chaves. */
             for (int i = inicio; i < tam; i++) {
                 int chave = universo[i];
 
-                /* A populacao inicial nao entra na medicao. */
                 (void)adicionar(avl, chave);
                 (void)adicionarARN(arn, chave);
                 (void)adicionaChave(ab1, chave);
@@ -98,8 +93,7 @@ int main(void) {
                 ativos[qtdAtivos++] = chave;
             }
 
-            /* ---------------- UMA ADICAO MEDIDA ---------------- */
-            /* A chave extra nao aparece no conjunto inicial. */
+            // Adição 
             int chaveAdd = extras[nivel - 1];
 
             somaAdd[nivel - 1][0] += adicionar(avl, chaveAdd);
@@ -110,9 +104,7 @@ int main(void) {
 
             ativos[qtdAtivos++] = chaveAdd;
 
-            /* ---------------- UMA REMOCAO MEDIDA ---------------- */
-            /* Sorteia uma chave entre as que ja existiam antes da adicao.
-               Assim a remocao nao desfaz imediatamente a adicao medida. */
+            // Remoção 
             int pos = rand() % tam;
             int chaveRemove = ativos[pos];
 
@@ -123,12 +115,12 @@ int main(void) {
             somaRemove[nivel - 1][3] += removeChave(ab5, ab5->raiz, chaveRemove);
             somaRemove[nivel - 1][4] += removeChave(ab10, ab10->raiz, chaveRemove);
 
-            /* Atualiza o vetor de chaves presentes nas arvores. */
+            // Atualiza o vetor de chaves presentes nas arvores
             ativos[pos] = ativos[qtdAtivos - 1];
             qtdAtivos--;
         }
 
-        /* Libera todos os nos antes de iniciar a proxima amostra. */
+        // Libera todos os nos antes de iniciar a proxima amostra
         destroiAVL(avl);
         destroiArvoreARN(arn);
         destroiArvoreB(ab1);
@@ -136,7 +128,7 @@ int main(void) {
         destroiArvoreB(ab10);
     }
 
-    /* Calcula a media das dez operacoes medidas em cada nivel. */
+    // Calcula a media das dez operacoes medidas em cada nivel
     for (int nivel = 0; nivel < 10; nivel++) {
         int tam = (nivel + 1) * PASSO;
         double mediaAdd[5];

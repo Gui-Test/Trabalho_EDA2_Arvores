@@ -3,14 +3,14 @@
 #include "funcoes.h"
 
 /*
- * Contador de esforco da arvore B.
- * Sao contabilizados: comparacoes de chaves, descidas entre nos,
- * deslocamentos de chaves/ponteiros e alteracoes estruturais de
- * divisao, emprestimo, fusao e reducao da raiz.
+  Contador de esforco da arvore B.
+  Sao contabilizados: comparacoes de chaves, descidas entre nos,
+  deslocamentos de chaves/ponteiros e alteracoes estruturais de
+  divisao, emprestimo, fusao e reducao da raiz.
  */
 static int esforcoB = 0;
 
-static void contaB(void) {
+static void contaB() {
     if (esforcoB < 2147483647)
         esforcoB++;
 }

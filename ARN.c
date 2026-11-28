@@ -3,14 +3,14 @@
 #include "funcoes.h"
 
 /*
- * Contador de esforco da rubro-negra.
- * Sao contabilizados: comparacoes de chaves, visitas na busca,
- * verificacoes de cor, alteracoes de cor e alteracoes de ponteiros
- * realizadas nas rotacoes, substituicoes e remocoes.
+  Contador de esforco da rubro-negra.
+  Sao contabilizados: comparacoes de chaves, visitas na busca,
+  verificacoes de cor, alteracoes de cor e alteracoes de ponteiros
+  realizadas nas rotacoes, substituicoes e remocoes.
  */
 static int esforcoARN = 0;
 
-static void contaARN(void) {
+static void contaARN() {
     if (esforcoARN < 2147483647)
         esforcoARN++;
 }

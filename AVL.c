@@ -3,14 +3,14 @@
 #include "funcoes.h"
 
 /*
- * Contador de esforco da AVL.
- * Sao contabilizados: comparacoes de chaves, visitas durante buscas,
- * atualizacoes de altura/fator de balanceamento e alteracoes estruturais
- * de ponteiros realizadas nas rotacoes e remocoes.
+ Contador de esforco da AVL
+ Sao contabilizados: comparacoes de chaves, visitas durante buscas,
+ atualizacoes de altura/fator de balanceamento e alteracoes estruturais
+ de ponteiros realizadas nas rotacoes e remocoes
  */
 static int esforcoAVL = 0;
 
-static void contaAVL(void) {
+static void contaAVL() {
     if (esforcoAVL < 2147483647)
         esforcoAVL++;
 }
